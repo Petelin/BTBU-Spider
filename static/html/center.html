@@ -1,0 +1,260 @@
+<!DOCTYPE html5>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>全部功能</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://www.bootcss.com/p/buttons/css/buttons.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+    <link href="../css/loding.css" rel="stylesheet">
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-80548840-1', 'auto');
+        ga('send', 'pageview');
+
+        </script>
+</head>
+<style type="text/css">
+    body {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        background-color: whitesmoke;
+    }
+
+    input[type=text], input[type=number], input[type=password] {
+        height: 2.5em;
+        font-size: 1em;
+        border-radius: 2px;
+        outline: 0;
+        border: #ccc 1px solid;
+        padding-left: 10px;
+        margin: 0;
+    }
+
+    .wapper {
+        height: 100%;
+    }
+
+    .header, .footer {
+        background-color: #0e90d2;
+    }
+
+    .header {
+        height: 10%;
+        vertical-align: middle;
+    }
+
+    .footer {
+        height: 4%;
+        padding: 2%;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    #center {
+        height: 84%;
+    }
+
+    #vc {
+        display: table;
+        background-color: whitesmoke;
+        width: 100%;
+        height: 33%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    #vci {
+        text-align: center;
+        vertical-align: middle;
+        display: table-cell;
+    }
+
+    #content {
+        color: #fff;
+        border: 1px solid #fff;
+        display: inline-block;
+    }
+
+    select {
+        width: 10em;
+        height: 2em;
+        font-size: 1em;
+    }
+</style>
+<script>
+    function get_CET() {
+        url = "/CET";
+        $.ajax({
+            //提交数据的类型 POST GET
+            type: "GET",
+            //提交的网址
+            url: url,
+            //返回数据的格式
+            datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+            //在请求之前调用的函数
+            beforeSend: function () {
+                $('#ballsWaveG').show();
+                $("#msg").text("");
+            },
+            //成功返回之后调用的函数
+            success: function (data) {
+                html = "";
+                list = JSON.parse(data)
+                for (index in list) {
+                    html += list[index].join("<br/><br/>");
+                    html += "<hr>"
+                }
+                $("#center").html(html);
+                $("#msg").text("");
+                $('#icon-text').text("返回继续查询");
+                $("#before_button").css('width', '6.4em');
+
+                $("#before_button").attr("onclick", 'location="/"');
+                $('#ballsWaveG').hide();
+                $('.footer').hide();
+                document.title = "查询结果--ebtbu";
+            },
+            //调用出错执行的函数
+            error: function () {
+                $("#msg").html("请求失败,联系我们吧~~");
+                $('#ballsWaveG').hide();
+            }
+        });
+    }
+
+    function go(idname, url) {
+        var select = document.getElementById(idname)
+        var value = select.options[select.selectedIndex].value
+
+        $.ajax({
+            //提交数据的类型 POST GET
+            type: "POST",
+            //提交的网址
+            url: url,
+            //提交的数据
+            data: {term: value},
+            //返回数据的格式
+            datatype: "html",//"xml", "html", "script", "json", "jsonp", "text".
+            //在请求之前调用的函数
+            beforeSend: function () {
+                $('#ballsWaveG').show();
+                $("#msg").text("");
+            },
+            //成功返回之后调用的函数
+            success: function (data) {
+                $("#center").html(data);
+                $("#msg").text("");
+                $('#icon-text').text("返回继续查询");
+                $("#before_button").css('width', '6.4em');
+
+                $("#before_button").attr("onclick", 'location="/"');
+                $('#ballsWaveG').hide();
+                $('.footer').hide();
+                document.title = "查询结果--ebtbu";
+            },
+            //调用出错执行的函数
+            error: function () {
+                $("#msg").html("请求失败,联系我们吧~~");
+                $('#ballsWaveG').hide();
+            }
+        });
+    }
+</script>
+<body>
+<div class="wapper">
+
+    <!-- 顶部 -->
+    <div class="header">
+        <!-- 图标 -->
+        <button id="before_button" class="button button-medium button-plain button-border button-circle"
+                style="width: 3.2em;height: 3.2em; top: -webkit-calc( (100% - 3.2em) / 2);left: 0.3em;;position: relative"
+                onclick="location='/logout'">
+            <i class="fa fa-reply" style="font-size: 2em;"></i>
+        </button>
+        <b id="icon-text" style="font-size: 1em;color: whitesmoke;margin-left: 0.3em;top: -webkit-calc( 50% - 2em); position:relative;">注销(重新登录)</b>
+    </div>
+
+    <!-- 中心 -->
+    <div id="center">
+        <div id="vc">
+            <div id="vci">
+
+                <!-- 消息栏,ajax栏 -->
+                <p id="msg" style="font-size: 1em;color: red">校教务处网站频繁改动,如果失败,实属无奈--</p>
+                <div id="ballsWaveG" hidden="hidden">
+                    <div id="ballsWaveG_1" class="ballsWaveG"></div>
+                    <div id="ballsWaveG_2" class="ballsWaveG"></div>
+                    <div id="ballsWaveG_3" class="ballsWaveG"></div>
+                    <div id="ballsWaveG_4" class="ballsWaveG"></div>
+                    <div id="ballsWaveG_5" class="ballsWaveG"></div>
+                    <div id="ballsWaveG_6" class="ballsWaveG"></div>
+                    <div id="ballsWaveG_7" class="ballsWaveG"></div>
+                    <div id="ballsWaveG_8" class="ballsWaveG"></div>
+                </div>
+                <div id="content">
+
+                    <!-- <input type="text"> -->
+                    <h2 style="color: #000;">查成绩:</h2>
+                    <b style="color: #000;">学期: </b>
+
+
+                    <select name="term" id="score" required="required" style="border: 1px gray solid">
+                        <option value="2016-2017-1">新学期</option>
+                        <option value="2015-2016-2" selected="selected">本学期</option>
+                        <option value="2015-2016-1">上学期</option>
+                        <option value="2014-2015-2">2014-2015-2</option>
+                        <option value="2014-2015-1">2014-2015-1</option>
+                        <option value="2013-2014-2">2013-2014-2</option>
+                        <option value="2013-2014-1">2013-2014-1</option>
+                        <option value="2012-2013-2">2012-2013-2</option>
+                        <option value="2012-2013-1">2012-2013-1</option>
+                    </select>
+                    <a onclick="go('score','/score')" class="button button-primary button-rounded">go</a>
+                </div>
+            </div>
+        </div>
+        <!-- 下半部分 -->
+        <div id="vc">
+            <div id="vci">
+                <div id="content">
+                    <!-- <input type="text"> -->
+                    <h2 style="color: #000;">查课表:</h2>
+                    <b style="color: #000;">学期: </b>
+
+                    <select name="term" id="timetable" required="required" style="border: 1px gray solid">
+                        <option value="2016-2017-1" selected="selected">新学期</option>
+                        <option value="2015-2016-2">本学期</option>
+                        <option value="2015-2016-1">上学期</option>
+                        <option value="2014-2015-2">上上学期</option>
+                        <option value="2014-2015-1">2014-2015-1</option>
+                        <option value="2013-2014-2">2013-2014-2</option>
+                        <option value="2013-2014-1">2013-2014-1</option>
+                        <option value="2012-2013-2">2012-2013-2</option>
+                        <option value="2012-2013-1">2012-2013-1</option>
+                    </select>
+                    <a onclick="go('timetable','/timetable')" class="button button-primary button-rounded">go</a>
+                </div>
+            </div>
+        </div>
+        <div id="vc">
+            <div id="vci">
+                <div id="content">
+                    <a onclick="get_CET()" class="button button-primary button-rounded">查46级</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 底部 -->
+    <div class="footer">
+        ©2016-2017 eBTBU by 张晓林.
+    </div>
+</div>
+</body>
+</html>

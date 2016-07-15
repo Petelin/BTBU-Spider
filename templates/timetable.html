@@ -1,0 +1,33 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=0.4">
+</head>
+<style>
+</style>
+<script type="text/javascript">
+    $('document').ready(function () {
+        show = false;
+        $('div[id $= -1]').hide();
+        $('div[id $= -2]').show();
+        $('#btn').click(function () {
+            if (!show) {
+                $('div[id $= -1]').show();
+                $('div[id $= -2]').hide();
+                show = true;
+                $('#btn').text("查看详细信息");
+            }
+            else {
+                $('div[id $= -1]').hide();
+                $('div[id $= -2]').show();
+                show = false;
+                $('#btn').text("查看简要信息");
+            }
+        })
+    });
+</script>
+<!--
+<div style="align-content: center;text-align: center;">
+    <a class="button button-primary button-rounded" id="btn">查看详细信息</a>
+</div>
+-->
+{{ table|safe }}
+
