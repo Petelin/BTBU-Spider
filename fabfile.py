@@ -6,6 +6,7 @@ from fabric.contrib.console import confirm
 
 env.roledefs = {
     'ali': ['lin@115.28.193.208'],
+    'bwg': ['root@b.xrange.top:38000'],
 }
 
 
@@ -44,7 +45,6 @@ def restart():
     run("sudo uwsgi --reload /tmp/BTBU-Spider.pid")
 
 
-@roles("ali")
 @task
 def test_upload():
     """上传代码到测试服务器"""
@@ -54,14 +54,13 @@ def test_upload():
     run("tar -zx -f /tmp/btbu-spider.tar.gz -C ~/test/")
 
 
-@roles("ali")
 @task
 def test_runserver():
     """开启测试服务器"""
     with cd('~/test/BTBU-Spider'):
         run('source /home/ebtbu/Documents/pyenv/cls/bin/activate')
         run('python myapp.py')
-        run("sleep 90")
+        run("sleep 3600")
 
 
 @roles("ali")

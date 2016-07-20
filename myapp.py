@@ -32,23 +32,18 @@ def login():
             return redirect('static/html/login.html')
     elif request.method == "POST":
         id = request.form.get('idcode')
-
         internet_pwd = request.form.get('internetpw')
-
         pwd = request.form.get('pw')
-
         if not id or not internet_pwd or not pwd:
-            return redirect("wrong.html")
+            return render_template("wrong.html", message="不能为空")
         jwc = JWC(id, internet_pwd, pwd)
         try:
             jwc.login()
         except Exception as e:
             return render_template("wrong.html", message=e)
-
         session['DSID'] = jwc.s.cookies.get('DSID')
         session.permanent = True
         return redirect('/static/html/center.html')
-
 
 @app.route('/score', methods=['GET', 'POST'])
 def score_login():
@@ -60,32 +55,13 @@ def score_login():
     return redirect('/static/html/login.html')
 
 
-# @app.route('/detail', methods=['GET', 'POST'])
-# def detail():
-#     if request.method == "POST":
-#         url = request.form['url']
-#         dsid = request.form['cookies']
-#         cookies = {'DSID': dsid}
-#         r = requests.get(url, verify=False, cookies=cookies)
-#
-#         soup = BeautifulSoup(r.text, 'html.parser')
-#
-#         tr = soup.find(attrs={'class': 'smartTr'})
-#         list = []
-#         find_all = tr.find_all('td')
-#         for td in find_all:
-#             list.append(td.string)
-#         f = {
-#             'normal': list[0].encode('utf-8'),
-#             'bili1': list[1].encode('utf-8'),
-#             'medium': list[2].encode('utf-8'),
-#             'bili2': list[3].encode('utf-8'),
-#             'finale': list[4].encode('utf-8'),
-#             'bili3': list[5].encode('utf-8'),
-#             'total': list[6].encode('utf-8'),
-#         }
-#         return jsonify(**f)
-#     return "不要闹"
+@app.route('/detail', methods=['POST'])
+def detail():
+    params = request.form.get('params')
+    if 'DSID' in session and params:
+        j = JWC(sessionid=session.get('DSID'))
+        return json.dumps(j.get_score_detial(params))
+    return json.dumps({'isok': False})
 
 
 @app.route('/timetable', methods=['GET', 'POST'])
@@ -97,13 +73,15 @@ def timetable():
         return render_template('timetable.html', table=table)
     return redirect('/static/html/login.html')
 
+
 @app.route('/CET', methods=['GET'])
 def CET():
     if 'DSID' in session:
         j = JWC(sessionid=session.get('DSID'))
-        scorelist= j.get_CET()
+        scorelist = j.get_CET()
         return json.dumps(scorelist)
     return redirect('/static/html/login.html')
+
 
 @app.route('/logout')
 def logout():
@@ -121,4 +99,4 @@ def logout():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run('0.0.0.0', port=38000)
+    app.run('0.0.0.0', port=28000)

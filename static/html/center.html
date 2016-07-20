@@ -8,16 +8,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
     <link href="../css/loding.css" rel="stylesheet">
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-80548840-1', 'auto');
-        ga('send', 'pageview');
-
-        </script>
 </head>
 <style type="text/css">
     body {
@@ -161,7 +151,7 @@
             },
             //调用出错执行的函数
             error: function () {
-                $("#msg").html("请求失败,联系我们吧~~");
+                $("#msg").html("请求失败,再试一下吧");
                 $('#ballsWaveG').hide();
             }
         });
@@ -187,7 +177,7 @@
             <div id="vci">
 
                 <!-- 消息栏,ajax栏 -->
-                <p id="msg" style="font-size: 1em;color: red">校教务处网站频繁改动,如果失败,实属无奈--</p>
+                <p id="msg" style="font-size: 1em;color: red">欢迎~~</p>
                 <div id="ballsWaveG" hidden="hidden">
                     <div id="ballsWaveG_1" class="ballsWaveG"></div>
                     <div id="ballsWaveG_2" class="ballsWaveG"></div>
@@ -246,7 +236,7 @@
         <div id="vc">
             <div id="vci">
                 <div id="content">
-                    <a onclick="get_CET()" class="button button-primary button-rounded">查46级</a>
+                    <a onclick="get_CET()" class="button button-primary button-rounded">其他成绩(来源于教务处)</a>
                 </div>
             </div>
         </div>
@@ -255,6 +245,9 @@
     <div class="footer">
         ©2016-2017 eBTBU by 张晓林.
     </div>
+</div>
+<div style="display:none">
+    <script src="https://s11.cnzz.com/z_stat.php?id=1259948022&web_id=1259948022" language="JavaScript"></script>
 </div>
 </body>
 </html>

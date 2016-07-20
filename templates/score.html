@@ -2,10 +2,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.4">
 </head>
 <script>
-    function DanaPutCursor(a,b,c){
+    // First, checks if it isn't implemented yet.
+    if (!String.prototype.format) {
+        String.prototype.format = function () {
+            var args = arguments;
+            return this.replace(/{(\d+)}/g, function (match, number) {
+                return typeof args[number] != 'undefined'
+                        ? args[number]
+                        : match
+                        ;
+            });
+        };
     }
+    function DanaPutCursor(a, b, c) {
+    }
+    function JsMod(params) {
+        url = "/detail";
+        $.ajax({
+            //提交数据的类型 POST GET
+            type: "POST",
+            //提交的网址
+            url: url,
+            //提交的数据
+            data: {"params": params},
+            //返回数据的格式
+            datatype: "json",
+            success: function (data) {
+                result = JSON.parse(data);
+                if (!result.isok) {
+                    alert("该科目没有详情");
+                }
+                else {
+                    s = "";
+                    s += "平时成绩:\t{0}\n".format(result.normal);
+                    s += "平时占比:\t{0}\n".format(result.bili1);
+                    s += "期中成绩:\t{0}\n".format(result.medium);
+                    s += "期中占比:\t{0}\n".format(result.bili2);
+                    s += "期末成绩:\t{0}\n".format(result.finale);
+                    s += "期末占比:\t{0}\n".format(result.bili3);
+                    s += "总成绩成绩:\t{0}\n".format(result.total);
+                    alert(s)
+                }
+            },
+            //调用出错执行的函数
+            error: function () {
+                alert("服务器整个人都不好了~~");
+            }
+        });
+    }
+
 </script>
+
+<div style="vertical-align: middle;text-align: center">
+<p style="color: red;font-size: 2em;">新功能:放大点击蓝色成绩,可以看平时成绩</p>
+</div>
+
 {{ scoretable|safe }}
 
+<div style="display:none">
+    <script src="https://s11.cnzz.com/z_stat.php?id=1259948022&web_id=1259948022" language="JavaScript"></script>
+</div>
 
 
