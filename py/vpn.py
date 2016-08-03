@@ -1,4 +1,5 @@
 # coding: utf-8
+import random
 import re
 import time
 
@@ -6,14 +7,20 @@ import bs4
 from bs4 import BeautifulSoup
 
 from idcode import *
-import random
+
+
 class Proxies():
     @staticmethod
     def get():
-        # "http://119.18.234.60:80",
-        all = (("",1),("http://119.18.234.60:80",2),("http://223.202.20.221:443",2),("http://202.106.16.36:3128",2),)
-        p = dict(https= random.choice([k for k,v in all for i in range(v)]))
+        all = (("", 1), ("http://202.106.16.36:3128", 1),)
+        ip = random.choice([k for k, v in all for i in range(v)])
+        p = dict(https=ip, http=ip)
+        try:
+            r = requests.get("http://www.baidu.com", timeout=2, proxies=p)
+        except requests.exceptions.Timeout as e:
+            return {'https': ''}
         return p
+
 
 class VPN(object):
     def __init__(self, id, internet_pwd):
@@ -24,7 +31,6 @@ class VPN(object):
         self.s = requests.session()
         self.s.verify = False
         proxies = Proxies.get()
-        print proxies
         self.s.proxies.update(proxies)
 
     def login(self):
@@ -148,6 +154,7 @@ class JWC(VPN):
         query_data = {"kksj": time}
         score_url = "https://vpn.btbu.edu.cn/,DanaInfo=jwgl.btbu.edu.cn+xszqcjglAction.do?method=queryxscj"
         r = self.s.post(score_url, data=query_data)
+        print(r.text)
         return self.__parse_score(r.text)
 
     def __parse_score(self, html):
@@ -245,5 +252,8 @@ if __name__ == "__main__":
 
     j = JWC(id, i_pwd, i_pwd)
     j.login()
-    # print j.get_timetable('2015-2016-2')
-    print j.get_CET()
+    #print j.get_timetable('2015-2016-2')
+    print j.get_score('2015-2016-2')
+    #print j.get_CET()
+
+    #print(Proxies.get())

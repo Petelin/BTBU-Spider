@@ -9,6 +9,30 @@
     <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
     <link href="../css/loding.css" rel="stylesheet">
 </head>
+<script type="text/javascript">
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+    });
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideToolbar');
+    });
+
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-80548840-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
 <style type="text/css">
     body {
         height: 100%;
@@ -79,6 +103,7 @@
     }
 </style>
 <script>
+
     function get_CET() {
         url = "/CET";
         $.ajax({
@@ -168,7 +193,8 @@
                 onclick="location='/logout'">
             <i class="fa fa-reply" style="font-size: 2em;"></i>
         </button>
-        <b id="icon-text" style="font-size: 1em;color: whitesmoke;margin-left: 0.3em;top: -webkit-calc( 50% - 2em); position:relative;">注销(重新登录)</b>
+        <b id="icon-text"
+           style="font-size: 1em;color: whitesmoke;margin-left: 0.3em;top: -webkit-calc( 50% - 2em); position:relative;">注销(重新登录)</b>
     </div>
 
     <!-- 中心 -->
@@ -245,9 +271,6 @@
     <div class="footer">
         ©2016-2017 eBTBU by 张晓林.
     </div>
-</div>
-<div style="display:none">
-    <script src="https://s11.cnzz.com/z_stat.php?id=1259948022&web_id=1259948022" language="JavaScript"></script>
 </div>
 </body>
 </html>
