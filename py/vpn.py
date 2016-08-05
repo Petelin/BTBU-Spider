@@ -154,7 +154,6 @@ class JWC(VPN):
         query_data = {"kksj": time}
         score_url = "https://vpn.btbu.edu.cn/,DanaInfo=jwgl.btbu.edu.cn+xszqcjglAction.do?method=queryxscj"
         r = self.s.post(score_url, data=query_data)
-        print(r.text)
         return self.__parse_score(r.text)
 
     def __parse_score(self, html):
@@ -183,8 +182,6 @@ class JWC(VPN):
 
         # get html
         signid = g[0]
-        if hasattr(self, "id"):
-            print "时间表 id", signid, self.id, self.internet_pwd, self.pwd
         # signid = "A48908FA3D1A430B9582E5457D2E99E1"
         params = "?method=goListKbByXs&istsxx=no&xnxqh=" + time + "&zc=&xs0101id=" + signid
         r = self.s.get(timetable_url + params)

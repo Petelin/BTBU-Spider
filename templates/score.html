@@ -1,5 +1,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=0.4">
+    <script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert-dev.min.js"></script>
+    <link href="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
 </head>
 <script>
     // First, checks if it isn't implemented yet.
@@ -16,6 +18,7 @@
     }
     function DanaPutCursor(a, b, c) {
     }
+
     function JsMod(params) {
         url = "/detail";
         $.ajax({
@@ -33,20 +36,28 @@
                     alert("该科目没有详情");
                 }
                 else {
-                    s = "";
-                    s += "平时成绩:\t{0}\n".format(result.normal);
-                    s += "平时占比:\t{0}\n".format(result.bili1);
-                    s += "期中成绩:\t{0}\n".format(result.medium);
-                    s += "期中占比:\t{0}\n".format(result.bili2);
-                    s += "期末成绩:\t{0}\n".format(result.finale);
-                    s += "期末占比:\t{0}\n".format(result.bili3);
-                    s += "总成绩成绩:\t{0}\n".format(result.total);
-                    alert(s)
+                    table = '<table class="table"><tbody>\
+                    <tr><th scope="row">平时成绩</th><td>{0}</td></tr>\
+                    <tr><th scope="row">平时占比</th><td>{1}</td></tr>\
+                    <tr><th scope="row">期中成绩</th><td>{2}</td></tr>\
+                    <tr><th scope="row">期中占比</th><td>{3}</td></tr>\
+                    <tr><th scope="row">期末成绩</th><td>{4}</td></tr>\
+                    <tr><th scope="row">期末占比</th><td>{5}</td></tr>\
+                    <tr><th scope="row">总成绩成绩</th><td>{6}</td></tr>\
+                    </tbody></table>'.format(result.normal,result.bili1,result.medium,result.bili2,result.finale,result.bili3,result.total);
+                   swal({
+                        title: "平时成绩 <small>~~</small>!",
+                        text: table,
+                       html: true }); 
+                    // alert(s)
                 }
             },
             //调用出错执行的函数
             error: function () {
-                alert("服务器整个人都不好了~~");
+               swal({
+                        title: "平时成绩 <small>~~</small>!",
+                        text: "服务器整个人都不好了~~",
+                       html: true }); 
             }
         });
     }
