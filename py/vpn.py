@@ -43,10 +43,10 @@ class VPN(object):
 
         # 必须设置超时时间
         try:
-            r = self.s.post(login_url, data=login_data, timeout=3)
+            r = self.s.post(login_url, data=login_data, timeout=1)
         except Exception as e:
             try:
-                r = self.s.post(login_url, data=login_data, timeout=3)
+                r = self.s.post(login_url, data=login_data, timeout=2)
             except Exception as e:
                 raise RuntimeError("error:vpn超过3s没有反应")
 

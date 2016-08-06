@@ -1,11 +1,11 @@
-
 <!DOCTYPE html5>
 <html lang="zh">
 <head>
     <meta charset="utf-8">
     <title>全部功能</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
     <link href="../css/loding.css" rel="stylesheet">
 </head>
@@ -42,25 +42,26 @@
         background-color: whitesmoke;
     }
 
-    .section{
+    .section {
         margin: 5em 0;
-    }    
+    }
+
     .box {
         padding: 1em;
         border: 1px solid #DDD;
         box-shadow: 1px 1px 1px #1111111;
         border-radius: 5px;
     }
+
     /* Sticky footer styles
         -------------------------------------------------- */
 
-
     .footer {
-      position: absolute;
-      bottom: 0;
-      /* Set the fixed height of the footer here */
-      height: 50px;
-      padding-top: 10px;
+        position: absolute;
+        bottom: 0;
+        /* Set the fixed height of the footer here */
+        height: 50px;
+        padding-top: 10px;
     }
 </style>
 <script>
@@ -156,28 +157,28 @@
     <!-- 中心 -->
     <!-- 消息栏,ajax栏 -->
     <div class="row" id="center">
-    	<div class="text-center">
-	        <h4 id="msg" class="text-info">欢迎~~</h4>
-	        <div id="ballsWaveG" hidden="hidden">
-	            <div id="ballsWaveG_1" class="ballsWaveG"></div>
-	            <div id="ballsWaveG_2" class="ballsWaveG"></div>
-	            <div id="ballsWaveG_3" class="ballsWaveG"></div>
-	            <div id="ballsWaveG_4" class="ballsWaveG"></div>
-	            <div id="ballsWaveG_5" class="ballsWaveG"></div>
-	            <div id="ballsWaveG_6" class="ballsWaveG"></div>
-	            <div id="ballsWaveG_7" class="ballsWaveG"></div>
-	            <div id="ballsWaveG_8" class="ballsWaveG"></div>
-	        </div>
+        <div class="text-center">
+            <h4 id="msg" class="text-info">欢迎~~</h4>
+            <div id="ballsWaveG" hidden="hidden">
+                <div id="ballsWaveG_1" class="ballsWaveG"></div>
+                <div id="ballsWaveG_2" class="ballsWaveG"></div>
+                <div id="ballsWaveG_3" class="ballsWaveG"></div>
+                <div id="ballsWaveG_4" class="ballsWaveG"></div>
+                <div id="ballsWaveG_5" class="ballsWaveG"></div>
+                <div id="ballsWaveG_6" class="ballsWaveG"></div>
+                <div id="ballsWaveG_7" class="ballsWaveG"></div>
+                <div id="ballsWaveG_8" class="ballsWaveG"></div>
+            </div>
         </div>
 
-        
+
         <div class="section row">
             <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1 box">
                 <div>
                     <h4 class="pagetitle text-center">查成绩:</h4>
                 </div>
                 <div class="">
-                   <p class="col-xs-3 form-control-static" for="score">学期 :</p> 
+                    <p class="col-xs-3 form-control-static" for="score">学期 :</p>
                     <div class="col-xs-6" style="padding-left:0;">
                         <select class="form-control" name="term" id="score" required="required">
                             <option value="2016-2017-1">新学期</option>
@@ -198,23 +199,23 @@
 
         <!-- 下半部分 -->
         <div class="section row">
-            <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1 box" >
+            <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1 box">
                 <div>
                     <h4 class="text-center">查课表:</h4>
                 </div>
                 <div class="">
-                   <p class="col-xs-3 form-control-static" for="timetable">学期 :</p> 
+                    <p class="col-xs-3 form-control-static" for="timetable">学期 :</p>
                     <div class="col-xs-6" style="padding-left:0;">
-                        <select class="form-control"  name="term" id="timetable" required="required">
+                        <select class="form-control" name="term" id="timetable" required="required">
                             <option value="2016-2017-1" selected="selected">新学期</option>
-                    <option value="2015-2016-2">本学期</option>
-                    <option value="2015-2016-1">上学期</option>
-                    <option value="2014-2015-2">上上学期</option>
-                    <option value="2014-2015-1">2014-2015-1</option>
-                    <option value="2013-2014-2">2013-2014-2</option>
-                    <option value="2013-2014-1">2013-2014-1</option>
-                    <option value="2012-2013-2">2012-2013-2</option>
-                    <option value="2012-2013-1">2012-2013-1</option>
+                            <option value="2015-2016-2">本学期</option>
+                            <option value="2015-2016-1">上学期</option>
+                            <option value="2014-2015-2">上上学期</option>
+                            <option value="2014-2015-1">2014-2015-1</option>
+                            <option value="2013-2014-2">2013-2014-2</option>
+                            <option value="2013-2014-1">2013-2014-1</option>
+                            <option value="2012-2013-2">2012-2013-2</option>
+                            <option value="2012-2013-1">2012-2013-1</option>
                         </select>
                     </div>
                     <a onclick="go('timetable','/timetable')" class="btn btn-primary col-xs-3" role="button">go</a>
@@ -223,16 +224,16 @@
         </div>
 
         <div class="section row text-center">
-        	<div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
-            <a onclick="get_CET()" class="btn btn-primary btn-rounded btn-block btn-md">其他成绩(来源于教务处)</a></div>
+            <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
+                <a onclick="get_CET()" class="btn btn-primary btn-rounded btn-block btn-md">其他成绩(来源于教务处)</a></div>
         </div>
     </div>
     <!-- 底部 -->
-    <footer class="footer text-center row col-xs-12">
-      <div class="">
-        <p class="text-muted">©2016-2017 eBTBU by 张晓林.</p>
-      </div>
+    <footer class="text-center row col-xs-12">
+        <div class="">
+            <p class="text-muted">©2016-2017 eBTBU by 张晓林.</p>
+        </div>
     </footer>
-    </div>
+</div>
 </body>
 </html>

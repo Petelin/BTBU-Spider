@@ -44,20 +44,22 @@
                     <tr><th scope="row">期末成绩</th><td>{4}</td></tr>\
                     <tr><th scope="row">期末占比</th><td>{5}</td></tr>\
                     <tr><th scope="row">总成绩成绩</th><td>{6}</td></tr>\
-                    </tbody></table>'.format(result.normal,result.bili1,result.medium,result.bili2,result.finale,result.bili3,result.total);
-                   swal({
+                    </tbody></table>'.format(result.normal, result.bili1, result.medium, result.bili2, result.finale, result.bili3, result.total);
+                    swal({
                         title: "平时成绩 <small>~~</small>!",
                         text: table,
-                       html: true }); 
+                        html: true
+                    });
                     // alert(s)
                 }
             },
             //调用出错执行的函数
             error: function () {
-               swal({
-                        title: "平时成绩 <small>~~</small>!",
-                        text: "服务器整个人都不好了~~",
-                       html: true }); 
+                swal({
+                    title: "平时成绩 <small>~~</small>!",
+                    text: "服务器整个人都不好了~~",
+                    html: true
+                });
             }
         });
     }
@@ -65,7 +67,7 @@
 </script>
 
 <div style="vertical-align: middle;text-align: center">
-<p style="color: red;font-size: 2em;">新功能:放大点击蓝色成绩,可以看平时成绩</p>
+    <p style="color: red;font-size: 2em;">新功能:放大点击蓝色成绩,可以看平时成绩</p>
 </div>
 
 {{ scoretable|safe }}
