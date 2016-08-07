@@ -164,10 +164,19 @@ class JWC(VPN):
         if not html:
             return soup.text
         else:
-            html = html.encode("utf-8")
+            scores = []
+            tds = html.find_all("td")
+            for score_row in [tds[i:i + 14] for i in range(0, len(tds), 14)]:
+                score = []
+                for td in score_row:
+                    if td.a:
+                        score.append((td.get_text().strip(), td.a['onclick']))
+                    else:
+                        score.append(td.get_text().strip())
+                scores.append(score)
             for hint in soup.find_all(id="tblBmDiv"):
-                html += hint.encode("utf-8")
-            return html
+                scores.append([hint.get_text().strip()])
+            return scores
 
     def get_timetable(self, time):
         # get significant

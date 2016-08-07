@@ -127,6 +127,7 @@
             success: function (data) {
                 $("#center").html(data);
                 $("#msg").text("");
+                $("#msg-sm").hide();
                 $('#icon-text').text("返回继续查询");
                 $("#before_button").css('width', '6.4em');
 
@@ -139,6 +140,7 @@
             error: function () {
                 $("#msg").addClass("text-danger");
                 $("#msg").html("请求失败,再试一下吧");
+                $("#msg-sm").hide();
                 $('#ballsWaveG').hide();
             }
         });
@@ -158,7 +160,8 @@
     <!-- 消息栏,ajax栏 -->
     <div class="row" id="center">
         <div class="text-center">
-            <h4 id="msg" class="text-info">欢迎~~</h4>
+            <h4 id="msg" class="text-info">不注销的话,下次就不用再登录了哦</h4>
+            <h4 id="msg-sm" class="text-info"><small>(时间长了肯定不行)</small></h4>
             <div id="ballsWaveG" hidden="hidden">
                 <div id="ballsWaveG_1" class="ballsWaveG"></div>
                 <div id="ballsWaveG_2" class="ballsWaveG"></div>
@@ -172,7 +175,7 @@
         </div>
 
 
-        <div class="section row">
+        <div class="section row" style="margin-top: 2em;">
             <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1 box">
                 <div>
                     <h4 class="pagetitle text-center">查成绩:</h4>

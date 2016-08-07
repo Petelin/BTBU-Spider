@@ -1,5 +1,5 @@
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=0.4">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert-dev.min.js"></script>
     <link href="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
 </head>
@@ -33,7 +33,11 @@
             success: function (data) {
                 result = JSON.parse(data);
                 if (!result.isok) {
-                    alert("该科目没有详情");
+                    swal({
+                        title: "平时成绩 <small>~~</small>",
+                        text: "该科目没有平时成绩",
+                        html: true
+                    });
                 }
                 else {
                     table = '<table class="table"><tbody>\
@@ -46,7 +50,7 @@
                     <tr><th scope="row">总成绩成绩</th><td>{6}</td></tr>\
                     </tbody></table>'.format(result.normal, result.bili1, result.medium, result.bili2, result.finale, result.bili3, result.total);
                     swal({
-                        title: "平时成绩 <small>~~</small>!",
+                        title: "平时成绩 <small>~~</small>",
                         text: table,
                         html: true
                     });
@@ -56,7 +60,7 @@
             //调用出错执行的函数
             error: function () {
                 swal({
-                    title: "平时成绩 <small>~~</small>!",
+                    title: "平时成绩 <small>~~</small>",
                     text: "服务器整个人都不好了~~",
                     html: true
                 });
@@ -66,11 +70,33 @@
 
 </script>
 
-<div style="vertical-align: middle;text-align: center">
-    <p style="color: red;font-size: 2em;">新功能:放大点击蓝色成绩,可以看平时成绩</p>
-</div>
-
-{{ scoretable|safe }}
-
-
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>名称</th>
+        <th>类别</th>
+        <th>类型</th>
+        <th>学时</th>
+        <th>学分</th>
+        <th>分数</th>
+{#        <th>考试情况</th>#}
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in scoretable[:-2] %}
+        <tr>
+            <th scope="row">{{ row[0] }}</th>
+            <td>{{ row[5] }}</td>
+            <td>{{ row[8] }}</td>
+            <td>{{ row[9] }}</td>
+            <td>{{ row[10] }}</td>
+            <td>{{ row[11] }}</td>
+            <td><a onclick="{{ row[6][1] }}" class="btn btn-success btn-sm">{{ row[6][0] }}</a></td>
+{#            <td>{{ row[12] }}</td>#}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<h4 class="text-info">{{ scoretable[-2][0] }}{{ scoretable[-1][0] }}</h4>
 
