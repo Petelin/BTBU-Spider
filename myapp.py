@@ -20,6 +20,15 @@ def setup():
     # 打开所有缓存
     BaseCodeStore.setup_basecode()
 
+@app.route('/test')
+def test1vpn(id, pwd):
+    print "开始 。。。"
+    j = JWC('2','3','2')
+    j.login()
+    print "结束 。。。"
+    msg = j.get_CET()
+    print "msg",msg
+    return msg
 
 @app.route('/')
 @app.route('/login', methods=['POST', 'GET'])
