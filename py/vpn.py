@@ -5,9 +5,10 @@ import time
 
 import bs4
 from bs4 import BeautifulSoup
-
+import settings
 from idcode import *
 
+logger = settings.logger
 
 class Proxies():
     @staticmethod
@@ -16,8 +17,9 @@ class Proxies():
         ip = random.choice([k for k, v in all for i in range(v)])
         p = dict(https=ip, http=ip)
         try:
-            r = requests.get("http://www.baidu.com", timeout=2, proxies=p)
+            r = requests.get("http://www.baidu.com", timeout=1, proxies=p)
         except requests.exceptions.Timeout as e:
+            logger.error("proxies not use able: %s" % ip)
             return {'https': ''}
         return p
 
@@ -52,7 +54,7 @@ class VPN(object):
 
         # 判断密码正确:
         if not re.match(r'.+p=failed', r.url) is None:
-            print("密码不对")
+            logger.error("密码不对 %s" % str(login_data))
             raise RuntimeError("error:上网登录密码错误")
 
         soup = bs4.BeautifulSoup(r.text.encode("gbk", errors='replace').decode("gbk"), 'html.parser')
@@ -65,8 +67,9 @@ class VPN(object):
             self.s.post(login_url, data=continue_data, verify=False, allow_redirects=False)
 
         if not self.s.cookies.get('DSID'):
-            print("error:查询次数太多,学校vpn拉黑了服务器ip,大约20分钟后解封.没人的时候再来吧")
+            logger.error("error:查询次数太多,学校vpn拉黑了服务器ip,大约20分钟后解封.没人的时候再来吧")
             raise RuntimeError("error:查询次数太多,学校vpn拉黑了服务器ip,大约20分钟后解封.没人的时候再来吧~~")
+        logger.warning('logging vpn')
 
     def logout(self):
         logout_url = "https://vpn.btbu.edu.cn/dana-na/auth/logout.cgi"
@@ -119,18 +122,19 @@ class JWC(VPN):
             # 登陆成功之后必须先访问这个网站，拿到权限
             r = self.s.post(login_url, data={'method': 'logonBySSO'});
             if r.status_code == 200:
-                print("jwc登录成功")
+                logger.info("jwc登录成功")
                 return self.s.cookies
         elif (re.search("验证码错误", r.text)):
-            print("wrong idcode,try login again...")
+            logger.error("wrong idcode,try login again...")
             # self.login()
             raise RuntimeError("error:访问人数太多,试试人流过去之后再来吧~")
 
         elif re.search("该帐号不存在或密码错误", r.text):
-            print("error:passwd or id wrong!")
+            logger.error("error:passwd or id wrong!")
             raise RuntimeError("error:密码或学号错误,默认密码为学号或身份证后六位.")
         else:
-            print("error:some unknow exception happen")
+            logger.error("error:some unknow exception happen")
+            logger.error(r.text)
             raise RuntimeError("error:some unknow exception happen")
 
     def get_score(self, time='2015-2016-1'):
@@ -186,7 +190,8 @@ class JWC(VPN):
         r = self.s.get(timetable_url + params)
         g = re.findall("""<input.*"xs0101id".*value ?= ?"(.*)".*/>""", r.text)
         if len(g) < 1:
-            print r.text
+            logger.error('网站改版')
+            logger.error(r.text)
             return u"网站改版，拿不到id码"
 
         # get html

@@ -14,21 +14,25 @@ app.secret_key = '/3^#$%^&<|}:FG*^&GH>"wr^&yX R~saffc]LWX/,?RT'
 
 debug = False
 
+logger = settings.logger
+
 
 @app.before_first_request
 def setup():
     # 打开所有缓存
     BaseCodeStore.setup_basecode()
 
+
 @app.route('/test')
 def test1vpn(id, pwd):
-    print "开始 。。。"
-    j = JWC('2','3','2')
+    logger.debug("开始 。。。")
+    j = JWC('2', '3', '2')
     j.login()
-    print "结束 。。。"
+    logger.debug("结束 。。。")
     msg = j.get_CET()
-    print "msg",msg
+    logger.debug("msg", msg)
     return msg
+
 
 @app.route('/')
 @app.route('/login', methods=['POST', 'GET'])
@@ -43,8 +47,9 @@ def login():
         id = request.form.get('idcode')
         internet_pwd = request.form.get('internetpw')
         pwd = request.form.get('pw')
-        if not id or not internet_pwd or not pwd:
-            return render_template("wrong.html", message="不能为空")
+        if not id or not internet_pwd or not pwd or len(id) != 10:
+            logger.warning('一开始账号密码输入错误')
+            return render_template("wrong.html", message="账号密码错误")
         jwc = JWC(id, internet_pwd, pwd)
         try:
             jwc.login()
@@ -53,6 +58,7 @@ def login():
         session['DSID'] = jwc.s.cookies.get('DSID')
         session.permanent = True
         return redirect('/static/html/center.html')
+
 
 @app.route('/score', methods=['GET', 'POST'])
 def score_login():
@@ -98,6 +104,7 @@ def logout():
         j = JWC(sessionid=session.get('DSID'))
         j.logout()
     session.clear()
+    logger.info("logout ...")
     return redirect('/')
 
 
