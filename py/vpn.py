@@ -5,10 +5,12 @@ import time
 
 import bs4
 from bs4 import BeautifulSoup
+
 import settings
 from idcode import *
 
 logger = settings.logger
+
 
 class Proxies():
     @staticmethod
@@ -45,17 +47,16 @@ class VPN(object):
 
         # 必须设置超时时间
         try:
-            r = self.s.post(login_url, data=login_data, timeout=1)
+            r = self.s.post(login_url, data=login_data, timeout=3)
         except Exception as e:
-            try:
-                r = self.s.post(login_url, data=login_data, timeout=2)
-            except Exception as e:
-                raise RuntimeError("error:vpn超过3s没有反应")
+            logger.error("vpn 没有反应")
+            logger.error(e.message)
+            raise RuntimeError("error:vpn没有反应")
 
         # 判断密码正确:
         if not re.match(r'.+p=failed', r.url) is None:
-            logger.error("密码不对 %s" % str(login_data))
-            raise RuntimeError("error:上网登录密码错误")
+            logger.error("vpn密码不对 %s" % str(login_data))
+            raise RuntimeError("error:上网登录密码错误,校服务器会因为你的登录失败而拒绝服务!!!")
 
         soup = bs4.BeautifulSoup(r.text.encode("gbk", errors='replace').decode("gbk"), 'html.parser')
         # 在特殊情况下才能拿到cookies
@@ -69,7 +70,7 @@ class VPN(object):
         if not self.s.cookies.get('DSID'):
             logger.error("error:查询次数太多,学校vpn拉黑了服务器ip,大约20分钟后解封.没人的时候再来吧")
             raise RuntimeError("error:查询次数太多,学校vpn拉黑了服务器ip,大约20分钟后解封.没人的时候再来吧~~")
-        logger.warning('logging vpn')
+        logger.info('logging into vpn ...')
 
     def logout(self):
         logout_url = "https://vpn.btbu.edu.cn/dana-na/auth/logout.cgi"
@@ -101,11 +102,7 @@ class JWC(VPN):
 
     def login(self):
         # 登录vpn
-        try:
-            super(JWC, self).login()
-        except:
-            # 异常发生再次尝试
-            super(JWC, self).login()
+        super(JWC, self).login()
 
         idcode_url = "https://vpn.btbu.edu.cn/,DanaInfo=jwgl.btbu.edu.cn+verifycode.servlet"
         login_url = 'https://vpn.btbu.edu.cn/,DanaInfo=jwgl.btbu.edu.cn+Logon.do'
@@ -120,22 +117,19 @@ class JWC(VPN):
         if re.search("http://jwgl.btbu.edu.cn/framework/main.jsp", r.text) or re.search(
                 "http://10.0.40.192/jsxsjz/framework/main.jsp", r.text):
             # 登陆成功之后必须先访问这个网站，拿到权限
-            r = self.s.post(login_url, data={'method': 'logonBySSO'});
+            r = self.s.post(login_url, data={'method': 'logonBySSO'})
             if r.status_code == 200:
                 logger.info("jwc登录成功")
                 return self.s.cookies
-        elif (re.search("验证码错误", r.text)):
-            logger.error("wrong idcode,try login again...")
-            # self.login()
-            raise RuntimeError("error:访问人数太多,试试人流过去之后再来吧~")
-
-        elif re.search("该帐号不存在或密码错误", r.text):
-            logger.error("error:passwd or id wrong!")
-            raise RuntimeError("error:密码或学号错误,默认密码为学号或身份证后六位.")
         else:
-            logger.error("error:some unknow exception happen")
-            logger.error(r.text)
-            raise RuntimeError("error:some unknow exception happen")
+            result = re.findall('''<span id="errorinfo">(.*)</span>''', r.text)
+            if result:
+                logger.warning(result[0])
+                raise RuntimeError("error : %s" % result[0])
+            else:
+                logger.error("error: 未知的异常")
+                logger.error(r.text)
+                raise RuntimeError("error: 未知的异常")
 
     def get_score(self, time='2015-2016-1'):
         """
@@ -263,8 +257,8 @@ if __name__ == "__main__":
 
     j = JWC(id, i_pwd, i_pwd)
     j.login()
-    #print j.get_timetable('2015-2016-2')
+    # print j.get_timetable('2015-2016-2')
     print j.get_score('2015-2016-2')
-    #print j.get_CET()
+    # print j.get_CET()
 
-    #print(Proxies.get())
+    # print(Proxies.get())
