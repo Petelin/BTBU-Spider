@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from flask import *
 from flask import Flask, request
 
 from py.vpn import *
 
-reload(sys)
-sys.setdefaultencoding('utf8')
-
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='static/html')
 app.secret_key = '/3^#$%^&<|}:FG*^&GH>"wr^&yX R~saffc]LWX/,?RT'
 
 debug = False
@@ -35,39 +31,47 @@ def test1vpn(id, pwd):
 
 
 @app.route('/')
-@app.route('/login', methods=['POST', 'GET'])
+def index():
+    sessionid = session.get('DSID')
+    if sessionid and JWC(sessionid=sessionid).is_ok():
+        return redirect('/center.html')
+    else:
+        return redirect('/login.html')
+
+
+@app.route('/login', methods=['POST'])
 def login():
-    if request.method == 'GET':
-        sessionid = session.get('DSID')
-        if sessionid and JWC(sessionid=sessionid).is_ok():
-            return redirect('/static/html/center.html')
-        else:
-            return redirect('static/html/login.html')
-    elif request.method == "POST":
-        id = request.form.get('idcode')
-        internet_pwd = request.form.get('internetpw')
-        pwd = request.form.get('pw')
-        if not id or not internet_pwd or not pwd or len(id) != 10:
-            logger.warning('一开始账号密码输入错误')
-            return render_template("wrong.html", message="账号密码错误")
-        jwc = JWC(id, internet_pwd, pwd)
-        try:
-            jwc.login()
-        except Exception as e:
-            return render_template("wrong.html", message=e)
-        session['DSID'] = jwc.s.cookies.get('DSID')
-        session.permanent = True
-        return redirect('/static/html/center.html')
+    id = request.form.get('idcode')
+    internet_pwd = request.form.get('internetpw')
+    pwd = request.form.get('pw')
+    if not id or not internet_pwd or not pwd or len(id) != 10:
+        logger.warning('一开始账号密码输入错误')
+        return render_template("wrong.html", message="账号密码错误")
+    jwc = JWC(id, internet_pwd, pwd)
+    try:
+        jwc.login()
+    except utils.PasswordError as e:
+        # 准备封掉用户id
+        ip = utils.get_ip(request)
+        logger.error("准备封掉ip: %s" % ip)
+        utils.incr('cls.vpn.block_ip::' + ip, 600)
+        return render_template("wrong.html", message=e)
+    except Exception as e:
+        return render_template("wrong.html", message=e)
+    session['DSID'] = jwc.s.cookies.get('DSID')
+    session['id'] = jwc.id
+    session.permanent = True
+    return redirect('/center.html')
 
 
-@app.route('/score', methods=['GET', 'POST'])
+@app.route('/score', methods=['POST'])
 def score_login():
     term = request.form.get('term')
     if 'DSID' in session and term:
         j = JWC(sessionid=session.get('DSID'))
         scoretable = j.get_score(term)
         return render_template('score.html', scoretable=scoretable)
-    return redirect('/static/html/login.html')
+    return redirect('/login.html')
 
 
 @app.route('/detail', methods=['POST'])
@@ -86,7 +90,7 @@ def timetable():
         j = JWC(sessionid=session.get('DSID'))
         table = j.get_timetable(term)
         return render_template('timetable.html', table=table)
-    return redirect('/static/html/login.html')
+    return redirect('/login.html')
 
 
 @app.route('/CET', methods=['GET'])
@@ -95,7 +99,7 @@ def CET():
         j = JWC(sessionid=session.get('DSID'))
         scorelist = j.get_CET()
         return json.dumps(scorelist)
-    return redirect('/static/html/login.html')
+    return redirect('/login.html')
 
 
 @app.route('/logout')

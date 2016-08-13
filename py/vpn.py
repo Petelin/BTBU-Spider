@@ -1,4 +1,4 @@
-# coding: utf-8
+# coding: utf - 8
 import random
 import re
 import time
@@ -7,6 +7,7 @@ import bs4
 from bs4 import BeautifulSoup
 
 import settings
+import utils
 from idcode import *
 
 logger = settings.logger
@@ -55,8 +56,11 @@ class VPN(object):
 
         # 判断密码正确:
         if not re.match(r'.+p=failed', r.url) is None:
-            logger.error("vpn密码不对 %s" % str(login_data))
-            raise RuntimeError("error:上网登录密码错误,校服务器会因为你的登录失败而拒绝服务!!!")
+            utils.incr(settings.VPN_FAIL_KEY)
+            if utils.over_limit(settings.VPN_FAIL_KEY):
+                logger.error("vpn登录失败超过限制: %d" % settings.fail_count_limit)
+            logger.warning("vpn密码不对 %s,vpn登录失败超过 %s次" % (str(login_data), utils.get(settings.VPN_FAIL_KEY)))
+            raise utils.PasswordError("error:上网登录密码错误,校服务器会因为你的登录失败而拒绝服务!!!")
 
         soup = bs4.BeautifulSoup(r.text.encode("gbk", errors='replace').decode("gbk"), 'html.parser')
         # 在特殊情况下才能拿到cookies
@@ -70,7 +74,7 @@ class VPN(object):
         if not self.s.cookies.get('DSID'):
             logger.error("error:查询次数太多,学校vpn拉黑了服务器ip,大约20分钟后解封.没人的时候再来吧")
             raise RuntimeError("error:查询次数太多,学校vpn拉黑了服务器ip,大约20分钟后解封.没人的时候再来吧~~")
-        logger.info('logging into vpn ...')
+        logger.info('succeed logging into vpn ...')
 
     def logout(self):
         logout_url = "https://vpn.btbu.edu.cn/dana-na/auth/logout.cgi"
