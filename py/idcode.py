@@ -70,8 +70,8 @@ def get_idcode(img_url, **kwargs):
 
 if __name__ == "__main__":
     BaseCodeStore.setup_basecode()
-    # time1 = time()
-    # for i in range(50):
-    #     inner_url = "http://jwgl.btbu.edu.cn/verifycode.servlet"
-    #     print get_idcode(inner_url)
-    # print time() - time1
+    import time
+    time1 = time()
+    for i in range(50):
+        inner_url = "http://jwgl.btbu.edu.cn/verifycode.servlet"
+        print(get_idcode(inner_url))

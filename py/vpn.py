@@ -16,7 +16,7 @@ logger = settings.logger
 class Proxies():
     @staticmethod
     def get():
-        all = (("", 1), ("http://202.106.16.36:3128", 1),)
+        all = (("", 1), ("http://202.106.16.36:3128", 0),)
         ip = random.choice([k for k, v in all for i in range(v)])
         p = dict(https=ip, http=ip)
         try:
@@ -46,13 +46,12 @@ class VPN(object):
                       'realm': '教师',
                       'btnSubmit': '登陆'}
 
-        # 必须设置超时时间
+        # 必须设置超时时间,超时证明密码不正确，服务器响应时间太长了
         try:
-            r = self.s.post(login_url, data=login_data, timeout=3)
+            r = self.s.post(login_url, data=login_data, timeout=2)
         except Exception as e:
-            logger.error("vpn 没有反应")
             logger.error(e.message)
-            raise RuntimeError("error:vpn没有反应")
+            raise RuntimeError("error:上网登录密码错误")
 
         # 判断密码正确:
         if not re.match(r'.+p=failed', r.url) is None:
@@ -60,7 +59,7 @@ class VPN(object):
             if utils.over_limit(settings.VPN_FAIL_KEY):
                 logger.error("vpn登录失败超过限制: %d" % settings.fail_count_limit)
             logger.warning("vpn密码不对 %s,vpn登录失败超过 %s次" % (str(login_data), utils.get(settings.VPN_FAIL_KEY)))
-            raise utils.PasswordError("error:上网登录密码错误,校服务器会因为你的登录失败而拒绝服务!!!")
+            raise utils.PasswordError("error:上网登录密码错误,不要在盲目尝试啦")
 
         soup = bs4.BeautifulSoup(r.text.encode("gbk", errors='replace').decode("gbk"), 'html.parser')
         # 在特殊情况下才能拿到cookies
@@ -72,8 +71,8 @@ class VPN(object):
             self.s.post(login_url, data=continue_data, verify=False, allow_redirects=False)
 
         if not self.s.cookies.get('DSID'):
-            logger.error("error:查询次数太多,学校vpn拉黑了服务器ip,大约20分钟后解封.没人的时候再来吧")
-            raise RuntimeError("error:查询次数太多,学校vpn拉黑了服务器ip,大约20分钟后解封.没人的时候再来吧~~")
+            logger.error("error:查询次数太多")
+            raise RuntimeError("error:查询次数太多,学校vpn禁止了ip,没人的时候再来吧~~")
         logger.info('succeed logging into vpn ...')
 
     def logout(self):
@@ -153,10 +152,19 @@ class JWC(VPN):
         c0-param1=Object_Object:{kcmc:reference:c0-e1, kksj:reference:c0-e2, kcxz:reference:c0-e3, xsfs:reference:c0-e4}
         batchId=1
         """
-        query_data = {"kksj": time}
-        score_url = "https://vpn.btbu.edu.cn/,DanaInfo=jwgl.btbu.edu.cn+xszqcjglAction.do?method=queryxscj"
-        r = self.s.post(score_url, data=query_data)
-        return self.__parse_score(r.text)
+        def _page(page=1):
+            query_data = {"kksj": time,'PageNum':page}
+            score_url = "https://vpn.btbu.edu.cn/,DanaInfo=jwgl.btbu.edu.cn+xszqcjglAction.do?method=queryxscj"
+            r = self.s.post(score_url, data=query_data)
+            return self.__parse_score(r.text)
+
+        result = _page(1)
+        if len(result) == 12:
+            second_page = _page(2)
+            result = result[:-2]
+            result.extend(second_page)
+        return result
+
 
     def __parse_score(self, html):
         soup = bs4.BeautifulSoup(html, 'html.parser')
@@ -188,12 +196,11 @@ class JWC(VPN):
         r = self.s.get(timetable_url + params)
         g = re.findall("""<input.*"xs0101id".*value ?= ?"(.*)".*/>""", r.text)
         if len(g) < 1:
-            logger.error('网站改版')
-            logger.error(r.text)
-            return u"网站改版，拿不到id码"
-
+            logger.error('get_timetable,拿不到操作码')
+            return u"登录已失效"
         # get html
         signid = g[0]
+        logger.info(signid)
         # signid = "A48908FA3D1A430B9582E5457D2E99E1"
         params = "?method=goListKbByXs&istsxx=no&xnxqh=" + time + "&zc=&xs0101id=" + signid
         r = self.s.get(timetable_url + params)
@@ -256,8 +263,8 @@ class JWC(VPN):
 
 if __name__ == "__main__":
     BaseCodeStore.setup_basecode()
-    id = 1302010635
-    i_pwd = "petelin1120"
+    id = 123
+    i_pwd = ""
 
     j = JWC(id, i_pwd, i_pwd)
     j.login()

@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-
+import sys
+import time
 from flask import *
 from flask import Flask, request
-
 from py.vpn import *
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 app = Flask(__name__, static_url_path='', static_folder='static/html')
 app.secret_key = '/3^#$%^&<|}:FG*^&GH>"wr^&yX R~saffc]LWX/,?RT'
@@ -18,8 +21,14 @@ def setup():
     # 打开所有缓存
     BaseCodeStore.setup_basecode()
 
+@app.before_request
+def before_request_profile():
+    g.start_time = time.time()
+    g.clock_time = time.clock()
+    return None
 
-@app.route('/test')
+
+#@app.route('/test')
 def test1vpn(id, pwd):
     logger.debug("开始 。。。")
     j = JWC('2', '3', '2')
@@ -112,6 +121,16 @@ def logout():
     return redirect('/')
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return redirect('404.html')
+
+@app.after_request
+def after_request_profile(response):
+    logger.info("{} ask duration {}s,cost {}s cpu time.".format(
+        request.path,time.time()-g.start_time,time.clock()-g.clock_time,
+    ))
+    return response
 # @app.teardown_appcontext
 # def teardown_db(exception):
 #     pass

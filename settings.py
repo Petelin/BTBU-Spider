@@ -2,18 +2,17 @@ from logging import Logger, FileHandler, Formatter, WARN, INFO
 
 #### -------------------------------------------- ####
 WARN_LOGGER = "/tmp/cls_warn.log"
-
 INFO_LOGGER = "/tmp/cls_info.log"
 
 logger = Logger('cls')
 formatter = Formatter("%(asctime)s - %(levelname)s - %(message)s")
 ### warn logger
-filewarnhandler = FileHandler(WARN_LOGGER, 'a+')
+filewarnhandler = FileHandler(WARN_LOGGER, 'a')
 filewarnhandler.setLevel(WARN)
 filewarnhandler.setFormatter(formatter)
 
 ### info logger
-fileinfohandler = FileHandler(INFO_LOGGER, 'a+')
+fileinfohandler = FileHandler(INFO_LOGGER, 'a')
 fileinfohandler.setLevel(INFO)
 fileinfohandler.setFormatter(formatter)
 
