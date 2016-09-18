@@ -100,8 +100,11 @@ class JWC(VPN):
         # timetable_url = "https://vpn.btbu.edu.cn/jsxsjz/,DanaInfo=10.0.40.192,Port=80+tkglAction.do?method=kbxxXs"
         main_url = "https://vpn.btbu.edu.cn/framework/,DanaInfo=jwgl.btbu.edu.cn+main.jsp"
         r = self.s.get(main_url)
-        g = re.search(u"""<!--界面使用的初始化""", r.text)
-        return True if g else False
+        g = re.search(u"""<title>(.*?)\[\d+\]北京工商大学综合教学管理系统-强智科技</title>""", r.text)
+        if g is not None:
+            return g.groups()[0]
+        else:
+            return None
 
     def login(self):
         # 登录vpn
@@ -123,6 +126,7 @@ class JWC(VPN):
             r = self.s.post(login_url, data={'method': 'logonBySSO'})
             if r.status_code == 200:
                 logger.info("jwc登录成功")
+                print r.text
                 return self.s.cookies
         else:
             result = re.findall('''<span id="errorinfo">(.*)</span>''', r.text)
@@ -152,8 +156,9 @@ class JWC(VPN):
         c0-param1=Object_Object:{kcmc:reference:c0-e1, kksj:reference:c0-e2, kcxz:reference:c0-e3, xsfs:reference:c0-e4}
         batchId=1
         """
+
         def _page(page=1):
-            query_data = {"kksj": time,'PageNum':page}
+            query_data = {"kksj": time, 'PageNum': page}
             score_url = "https://vpn.btbu.edu.cn/,DanaInfo=jwgl.btbu.edu.cn+xszqcjglAction.do?method=queryxscj"
             r = self.s.post(score_url, data=query_data)
             return self.__parse_score(r.text)
@@ -164,7 +169,6 @@ class JWC(VPN):
             result = result[:-2]
             result.extend(second_page)
         return result
-
 
     def __parse_score(self, html):
         soup = bs4.BeautifulSoup(html, 'html.parser')
@@ -260,16 +264,45 @@ class JWC(VPN):
         }
         return f
 
+    def traffic(self, id, name, radio=2):
+        # 先要授权
+        url = 'https://vpn.btbu.edu.cn/dana/home/invalidsslsite_confirm.cgi'
+        result = self.s.post(url)
+        match = re.search(r"""<input id="xsauth_400" type="hidden" name="xsauth" value="(.*?)">""", result.text)
+        xsauth = match.groups()[0]
+        data = 'xsauth={}&url=%2F%2CDanaInfo%3Dself.btbu.edu.cn%2CSSL%252B&certHost=self.btbu.edu.cn&certPort=443&certDigest=048ef3a83ef7af63e9651ba47b2ff39e&errorCount=1&notAfter=1450339235&action=%E7%BB%A7%E7%BB%AD'.format(
+            xsauth)
+        self.s.post(url, data)
+
+        url = 'https://vpn.btbu.edu.cn/,DanaInfo=self.btbu.edu.cn,SSL+chaxjg.php'
+        data = {'UserAccount': id,
+                'UserName': requests.utils.quote(name.encode('gbk')),
+                'radio': radio,
+                'button': requests.utils.quote(u'查询'.encode('gbk')),}
+
+        data_str = ""
+        for k, v in data.items():
+            data_str += "{}={}&".format(k, v)
+        headers = {'Content-Type': 'application/x-www-form-urlencoded',}
+        result = self.s.post(url, headers=headers, data=data_str)
+        html = result.text.encode('latin1').decode('gbk')
+
+        # 解析
+        soup = BeautifulSoup(html, 'html.parser')
+        u2t = [soup.find_all('strong')[-1].parent.parent.parent.parent.text.strip().split('\n')[i] for i in [-2, 3]]
+        return u2t
+
 
 if __name__ == "__main__":
     BaseCodeStore.setup_basecode()
-    id = 123
-    i_pwd = ""
+    id = u'1302010635'
+    i_pwd = "petelin1120"
 
     j = JWC(id, i_pwd, i_pwd)
     j.login()
     # print j.get_timetable('2015-2016-2')
     print j.get_score('2015-2016-2')
+    print(j.traffic(u'1302010635', u'张晓林'))
     # print j.get_CET()
 
     # print(Proxies.get())

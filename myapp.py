@@ -1,9 +1,9 @@
-
 # -*- coding: utf-8 -*-
 import sys
-import time
+
 from flask import *
 from flask import Flask, request
+
 from py.vpn import *
 
 reload(sys)
@@ -22,6 +22,7 @@ def setup():
     # 打开所有缓存
     BaseCodeStore.setup_basecode()
 
+
 @app.before_request
 def before_request_profile():
     g.start_time = time.time()
@@ -29,7 +30,7 @@ def before_request_profile():
     return None
 
 
-#@app.route('/test')
+# @app.route('/test')
 def test1vpn(id, pwd):
     logger.debug("开始 。。。")
     j = JWC('2', '3', '2')
@@ -112,6 +113,18 @@ def CET():
     return redirect('/login.html')
 
 
+@app.route('/traffic', methods=['GET'])
+def traffic():
+    """流量获取"""
+    use2total = []
+    if 'id' in session and 'DSID' in session:
+        j = JWC(sessionid=session.get('DSID'))
+        name = session.get('name') or j.is_ok()
+        session['name'] = name
+        use2total= j.traffic(session['id'], name)
+    return json.dumps(use2total)
+
+
 @app.route('/logout')
 def logout():
     if 'DSID' in session:
@@ -126,16 +139,19 @@ def logout():
 def page_not_found(e):
     return redirect('404.html')
 
+
 @app.errorhandler(500)
 def service_down(e):
     return redirect('500.html')
 
+
 @app.after_request
 def after_request_profile(response):
     logger.info("{} ask duration {}s,cost {}s cpu time.".format(
-        request.path,time.time()-g.start_time,time.clock()-g.clock_time,
+        request.path, time.time() - g.start_time, time.clock() - g.clock_time,
     ))
     return response
+
 
 # @app.teardown_appcontext
 # def teardown_db(exception):
