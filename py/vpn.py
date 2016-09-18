@@ -126,7 +126,6 @@ class JWC(VPN):
             r = self.s.post(login_url, data={'method': 'logonBySSO'})
             if r.status_code == 200:
                 logger.info("jwc登录成功")
-                print r.text
                 return self.s.cookies
         else:
             result = re.findall('''<span id="errorinfo">(.*)</span>''', r.text)

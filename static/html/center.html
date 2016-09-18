@@ -1,5 +1,5 @@
 <!DOCTYPE html5>
-<html lang="zh">
+<html lang="zh" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
     <title>全部功能</title>
@@ -35,8 +35,8 @@
 </script>
 <style type="text/css">
     body {
-        height: 100%
-        width: 100%
+        height: 100%;
+        width: 100%;
         padding: 0;
         margin: 0;
         background-color: whitesmoke;
@@ -53,6 +53,18 @@
         border-radius: 5px;
     }
 
+    .top { margin-bottom: 15px; }
+
+    #ballsWaveG {
+        position:absolute;
+        top: 50%;
+        left: 50%;
+        margin-top:-15px;
+        margin-left:-80px;
+        width: 160px;
+        height: 30px;
+        z-index: 100;
+    }
     /* Sticky footer styles
         -------------------------------------------------- */
 
@@ -78,6 +90,7 @@
             beforeSend: function () {
                 $('#ballsWaveG').show();
                 $("#msg").text("");
+                $("#msg-sm").hide();
             },
             //成功返回之后调用的函数
             success: function (data) {
@@ -122,12 +135,12 @@
             beforeSend: function () {
                 $('#ballsWaveG').show();
                 $("#msg").text("");
+                $("#msg-sm").hide();
             },
             //成功返回之后调用的函数
             success: function (data) {
                 $("#center").html(data);
                 $("#msg").text("");
-                $("#msg-sm").hide();
                 $('#icon-text').text("返回继续查询");
                 $("#before_button").css('width', '6.4em');
 
@@ -140,14 +153,58 @@
             error: function () {
                 $("#msg").addClass("text-danger");
                 $("#msg").html("请求失败,再试一下吧");
-                $("#msg-sm").hide();
                 $('#ballsWaveG').hide();
+            }
+        });
+    }
+
+    function traffic() {
+        url = '/traffic';
+        $.ajax({
+            //提交数据的类型 POST GET
+            type: "POST",
+            //提交的网址
+            url: url,
+            //返回数据的格式
+            datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+            //在请求之前调用的函数
+            beforeSend: function () {
+                $('#ballsWaveG').show();
+                $("#msg").text("");
+                $("#msg-sm").html("");
+            },
+            //成功返回之后调用的函数
+            success: function (data) {
+                $("#msg").text("");
+                $('#ballsWaveG').hide();
+                result = JSON.parse(data);
+                $("#traffic").text(result[0] + " MB /" + result[1] + " MB");
+                $("#traffic").attr('disabled','disabled');
+                $("#traffic").attr('onclick','');
+
+            },
+            //调用出错执行的函数
+            error: function () {
+                $("#msg").addClass("text-danger");
+                $("#msg").html("请求失败,再试一下吧");
+                $("#ballsWaveG").hide();
+                $("#traffic").html()
             }
         });
     }
 </script>
 <body>
 <div class="container-fluid">
+<div id="ballsWaveG" hidden="hidden" class="row col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
+    <div id="ballsWaveG_1" class="ballsWaveG"></div>
+    <div id="ballsWaveG_2" class="ballsWaveG"></div>
+    <div id="ballsWaveG_3" class="ballsWaveG"></div>
+    <div id="ballsWaveG_4" class="ballsWaveG"></div>
+    <div id="ballsWaveG_5" class="ballsWaveG"></div>
+    <div id="ballsWaveG_6" class="ballsWaveG"></div>
+    <div id="ballsWaveG_7" class="ballsWaveG"></div>
+    <div id="ballsWaveG_8" class="ballsWaveG"></div>
+</div>
     <!-- 顶部 -->
     <div class="navbar">
         <!-- 图标 -->
@@ -158,20 +215,10 @@
     </div>
     <!-- 中心 -->
     <!-- 消息栏,ajax栏 -->
-    <div class="row" id="center">
-        <div class="text-center">
+    <div class="" id="center">
+        <div class="text-center row">
             <h4 id="msg" class="text-info">不注销的话,下次就不用再登录了哦</h4>
             <h4 id="msg-sm" class="text-info"><small>(时间长了肯定不行)</small></h4>
-            <div id="ballsWaveG" hidden="hidden">
-                <div id="ballsWaveG_1" class="ballsWaveG"></div>
-                <div id="ballsWaveG_2" class="ballsWaveG"></div>
-                <div id="ballsWaveG_3" class="ballsWaveG"></div>
-                <div id="ballsWaveG_4" class="ballsWaveG"></div>
-                <div id="ballsWaveG_5" class="ballsWaveG"></div>
-                <div id="ballsWaveG_6" class="ballsWaveG"></div>
-                <div id="ballsWaveG_7" class="ballsWaveG"></div>
-                <div id="ballsWaveG_8" class="ballsWaveG"></div>
-            </div>
         </div>
 
 
@@ -226,9 +273,13 @@
             </div>
         </div>
 
-        <div class="section row text-center">
-            <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
-                <a onclick="get_CET()" class="btn btn-primary btn-rounded btn-block btn-md">其他成绩(来源于教务处)</a></div>
+        <div class="section text-center row">
+            <div id="traffi" class="col-md-3 col-md-offset-3 col-xs-10 col-xs-offset-1 top">
+                <a id="traffic" onclick="traffic()" class="btn btn-primary btn-rounded btn-block btn-md">流量信息(查询时间较长)</a>
+            </div>
+            <div class="col-md-3 col-md-offset-0 col-xs-10 col-xs-offset-1">
+                <a onclick="get_CET()" class="btn btn-primary btn-rounded btn-block btn-md">其他成绩(4/6级)</a>
+            </div>
         </div>
     </div>
     <!-- 底部 -->

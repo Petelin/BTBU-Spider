@@ -113,7 +113,7 @@ def CET():
     return redirect('/login.html')
 
 
-@app.route('/traffic', methods=['GET'])
+@app.route('/traffic', methods=['GET', 'POST'])
 def traffic():
     """流量获取"""
     use2total = []
