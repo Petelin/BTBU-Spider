@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 import sys
 import time
@@ -9,7 +10,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 app = Flask(__name__, static_url_path='', static_folder='static/html')
-app.secret_key = '/3^#$%^&<|}:FG*^&GH>"wr^&yX R~saffc]LWX/,?RT'
+app.secret_key = '/3^#$%zxc*((U$RA:WvljkFG*^&GH>"wr^&yX R~saffc]LWX/,?RT'
 
 debug = False
 
@@ -54,7 +55,7 @@ def login():
     internet_pwd = request.form.get('internetpw')
     pwd = request.form.get('pw')
     if not id or not internet_pwd or not pwd or len(id) != 10:
-        logger.warning('一开始账号密码输入错误')
+        logger.warning('一开始账号密码输入错误,{} :: {} :: {}'.format(id, internet_pwd, pwd))
         return render_template("wrong.html", message="账号密码错误")
     jwc = JWC(id, internet_pwd, pwd)
     try:
@@ -125,12 +126,17 @@ def logout():
 def page_not_found(e):
     return redirect('404.html')
 
+@app.errorhandler(500)
+def service_down(e):
+    return redirect('500.html')
+
 @app.after_request
 def after_request_profile(response):
     logger.info("{} ask duration {}s,cost {}s cpu time.".format(
         request.path,time.time()-g.start_time,time.clock()-g.clock_time,
     ))
     return response
+
 # @app.teardown_appcontext
 # def teardown_db(exception):
 #     pass
