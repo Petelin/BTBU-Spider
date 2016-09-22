@@ -6,11 +6,9 @@ import time
 import bs4
 from bs4 import BeautifulSoup
 
-import settings
 import utils
+from cls import logger, settings
 from idcode import *
-
-logger = settings.logger
 
 
 class Proxies():
@@ -213,7 +211,7 @@ class JWC(VPN):
         soup = bs4.BeautifulSoup(html, 'html.parser')
         html = soup.find_all(id='kbtable')
         if html:
-            return html[0].encode('utf-8')
+            return html[0]
         else:
             return soup.text
 

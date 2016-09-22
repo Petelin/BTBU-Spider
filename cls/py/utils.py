@@ -1,6 +1,6 @@
 from redis import Redis
 
-import settings
+from cls import settings
 
 
 class PasswordError(RuntimeError):
@@ -10,7 +10,7 @@ class PasswordError(RuntimeError):
 redis = Redis.from_url(settings.redis_url)
 
 
-def incr(key,time = 60):
+def incr(key, time=60):
     if not redis.exists(key):
         redis.set(key, 1, ex=time)
     else:
