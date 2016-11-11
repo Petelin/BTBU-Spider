@@ -27,3 +27,6 @@ fail_count_limit = 6
 VPN_FAIL_KEY = 'cls.vpn.fail_count'
 
 ###
+
+MIDDLEWARES = ["ProfileMiddleWare"]
+
