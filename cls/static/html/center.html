@@ -4,9 +4,8 @@
     <meta charset="utf-8">
     <title>全部功能</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script type="text/javascript" src="//lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
     <link href="../css/loding.css" rel="stylesheet">
 </head>
 <script type="text/javascript">
@@ -178,7 +177,7 @@
                 $("#msg").text("");
                 $('#ballsWaveG').hide();
                 result = JSON.parse(data);
-                $("#traffic").text(result[0] + " MB /" + result[1] + " MB");
+                $("#traffic").text("已使用"+result[0] + "MB;套餐" + result[1] + "MB");
                 $("#traffic").attr('disabled','disabled');
                 $("#traffic").attr('onclick','');
 
@@ -231,9 +230,9 @@
                     <p class="col-xs-3 form-control-static" for="score">学期 :</p>
                     <div class="col-xs-6" style="padding-left:0;">
                         <select class="form-control" name="term" id="score" required="required">
-                            <option value="2016-2017-1">新学期</option>
-                            <option value="2015-2016-2" selected="selected">本学期</option>
-                            <option value="2015-2016-1">上学期</option>
+                            <option value="2016-2017-1">本学期</option>
+                            <option value="2015-2016-2" selected="selected">上学期</option>
+                            <option value="2015-2016-1">上上学期</option>
                             <option value="2014-2015-2">2014-2015-2</option>
                             <option value="2014-2015-1">2014-2015-1</option>
                             <option value="2013-2014-2">2013-2014-2</option>
@@ -257,10 +256,10 @@
                     <p class="col-xs-3 form-control-static" for="timetable">学期 :</p>
                     <div class="col-xs-6" style="padding-left:0;">
                         <select class="form-control" name="term" id="timetable" required="required">
-                            <option value="2016-2017-1" selected="selected">新学期</option>
-                            <option value="2015-2016-2">本学期</option>
-                            <option value="2015-2016-1">上学期</option>
-                            <option value="2014-2015-2">上上学期</option>
+                            <option value="2016-2017-1" selected="selected">本学期</option>
+                            <option value="2015-2016-2">上学期</option>
+                            <option value="2015-2016-1">上上学期</option>
+                            <option value="2014-2015-2">2014-2015-2</option>
                             <option value="2014-2015-1">2014-2015-1</option>
                             <option value="2013-2014-2">2013-2014-2</option>
                             <option value="2013-2014-1">2013-2014-1</option>
@@ -275,10 +274,10 @@
 
         <div class="section text-center row">
             <div id="traffi" class="col-md-3 col-md-offset-3 col-xs-10 col-xs-offset-1 top">
-                <a id="traffic" onclick="traffic()" class="btn btn-primary btn-rounded btn-block btn-md">流量信息(查询时间较长)</a>
+                <a id="traffic" onclick="traffic()" class="btn btn-primary btn-rounded btn-block btn-md">校园网流量查询</a>
             </div>
             <div class="col-md-3 col-md-offset-0 col-xs-10 col-xs-offset-1">
-                <a onclick="get_CET()" class="btn btn-primary btn-rounded btn-block btn-md">其他成绩(4/6级)</a>
+                <a onclick="get_CET()" class="btn btn-primary btn-rounded btn-block btn-md">四六级成绩查询(无需账号)</a>
             </div>
         </div>
     </div>

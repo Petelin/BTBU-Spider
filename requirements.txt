@@ -9,3 +9,6 @@ urllib3
 uWSGI
 Werkzeug
 wheel
+gevent
+gunicorn
+redis

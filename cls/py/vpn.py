@@ -128,8 +128,9 @@ class JWC(VPN):
         else:
             result = re.findall('''<span id="errorinfo">(.*)</span>''', r.text)
             if result:
-                logger.warning(result[0])
-                raise RuntimeError("error : %s" % result[0])
+                error_msg = result[0]
+                logger.warning(error_msg)
+                raise RuntimeError("error: %s" % error_msg)
             else:
                 logger.error("error: 未知的异常")
                 logger.error(r.text)

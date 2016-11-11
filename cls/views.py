@@ -50,7 +50,12 @@ def login():
         utils.incr('cls.vpn.block_ip::' + ip, 600)
         return render_template("wrong.html", message=e.message.decode('utf8'))
     except Exception as e:
-        return render_template("wrong.html", message=e.message.decode('utf8'))
+        emsg = e.message.encode('utf-8')
+        logger.warning(type(emsg))
+        if '密码错误' in emsg:
+            emsg = "教务处密码错误，请检查后重试"
+        logger.warning('教务处登录异常: %s' % emsg)
+        return render_template("wrong.html", message=emsg.decode('utf-8'))
     session['DSID'] = jwc.s.cookies.get('DSID')
     session['id'] = jwc.id
     session.permanent = True

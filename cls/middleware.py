@@ -3,6 +3,8 @@ import time
 
 from flask import g, request, session
 
+from settings import logger
+
 
 class BaseMiddleware(object):
     @classmethod
@@ -24,9 +26,10 @@ class ProfileMiddleWare(BaseException):
 
     @classmethod
     def after(cls, response):
-        print ("id:{} ask {} duration {}s,cost {}s cpu time.".format(
+        logger.info("{} id:{} ask {} duration {}s,cost {}s cpu time.".format(
+            request.headers.get('X-Forwarded-For', request.remote_addr),
             session.get('id') or None,
-            request.path,
+            request.url,
             time.time() - g.start_time,
             time.clock() - g.clock_time,
         ))
