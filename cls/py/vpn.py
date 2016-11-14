@@ -123,7 +123,6 @@ class JWC(VPN):
             # 登陆成功之后必须先访问这个网站，拿到权限
             r = self.s.post(login_url, data={'method': 'logonBySSO'})
             if r.status_code == 200:
-                logger.info("jwc登录成功")
                 return self.s.cookies
         else:
             result = re.findall('''<span id="errorinfo">(.*)</span>''', r.text)
