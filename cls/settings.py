@@ -19,6 +19,16 @@ fileinfohandler.setFormatter(formatter)
 logger.addHandler(filewarnhandler)
 logger.addHandler(fileinfohandler)
 
+# origin_warning = logger.warning
+#
+#
+# def my_warning(*args, **kwargs):
+#     origin_warning(locals())
+#     return origin_warning(*args, **kwargs)
+#
+#
+# logger.warning = my_warning
+
 ### redis
 redis_url = '127.0.0.1:6379'
 
@@ -29,4 +39,3 @@ VPN_FAIL_KEY = 'cls.vpn.fail_count'
 ###
 
 MIDDLEWARES = ["ProfileMiddleWare"]
-

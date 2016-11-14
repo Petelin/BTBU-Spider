@@ -39,7 +39,7 @@ def login():
     pwd = request.form.get('pw')
     if not id or not internet_pwd or not pwd or len(id) != 10:
         logger.warning('一开始账号密码输入错误,{} :: {} :: {}'.format(id, internet_pwd, pwd))
-        return render_template("wrong.html", message=u"账号密码错误")
+        return render_template("wrong.html", message="账号密码错误")
     jwc = JWC(id, internet_pwd, pwd)
     try:
         jwc.login()
@@ -48,11 +48,13 @@ def login():
         ip = utils.get_ip(request)
         logger.error("准备封掉ip: {}".format(ip))
         utils.incr('cls.vpn.block_ip::' + ip, 600)
-        return render_template("wrong.html", message=e.message)
+        return render_template("wrong.html", message=str(e))
     except Exception as e:
-        emsg = e.message
-        if u'密码错误' in emsg:
-            emsg = u"教务处密码错误，请检查后重试"
+        emsg = str(e)
+        print(emsg, type(emsg))
+        logger.warning(emsg, type(emsg))
+        if '密码错误' in emsg:
+            emsg = '教务处密码错误，请检查后重试'
         logger.warning('教务处登录异常: {}'.format(emsg))
         return render_template("wrong.html", message=emsg)
     session['DSID'] = jwc.s.cookies.get('DSID')

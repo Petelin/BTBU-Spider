@@ -1,63 +1,54 @@
-<!DOCTYPE html>
-<html class="js cssanimations">
-<head lang="en">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="UTF-8">
+<!DOCTYPE HTML5>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <meta charset="utf-8">
+    <title>eBTBU</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
     <title>错误提示</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="Cache-Control" content="no-siteapp">
-    <link rel="stylesheet" href="/css/amazeui.min.css">
+
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            background-color: #E5E5E5;
-            font-weight: 300;
+        body {
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAxMC8yOS8xMiKqq3kAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAABHklEQVRIib2Vyw6EIAxFW5idr///Qx9sfG3pLEyJ3tAwi5EmBqRo7vHawiEEERHS6x7MTMxMVv6+z3tPMUYSkfTM/R0fEaG2bbMv+Gc4nZzn+dN4HAcREa3r+hi3bcuu68jLskhVIlW073tWaYlQ9+F9IpqmSfq+fwskhdO/AwmUTJXrOuaRQNeRkOd5lq7rXmS5InmERKoER/QMvUAPlZDHcZRhGN4CSeGY+aHMqgcks5RrHv/eeh455x5KrMq2yHQdibDO6ncG/KZWL7M8xDyS1/MIO0NJqdULLS81X6/X6aR0nqBSJcPeZnlZrzN477NKURn2Nus8sjzmEII0TfMiyxUuxphVWjpJkbx0btUnshRihVv70Bv8ItXq6Asoi/ZiCbU6YgAAAABJRU5ErkJggg==);
         }
 
-        .am-header-body {
-            margin: 0 30%;
-            font-size: 2rem;
-            font-weight: 400;
+        .error-template {
+            padding: 40px 15px;
             text-align: center;
-            display: block;
-            word-wrap: normal;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-            padding-top: 5%;
         }
 
-        .am-header-title .am-header {
-            margin: 0 30%;
-            font-size: 2rem;
-            font-weight: 400;
-            text-align: center;
-            display: block;
-            word-wrap: normal;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
+        .error-actions {
+            margin-top: 15px;
+            margin-bottom: 15px;
         }
 
+        .error-actions .btn {
+            margin-right: 10px;
+        }
     </style>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="error-template">
+                    <h1>
+                        Oops!
+                    </h1>
+                    <div class="error-details">
+                        <h4>{{ message |safe }} </h4>
+                    </div>
+                    <div class="error-actions">
+                        <a href="/login.html" class="btn btn-primary btn-lg"><span
+                                class="glyphicon glyphicon-home"></span>
+                            Take Me Home </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </head>
-<body>
-<header data-am-widget="header" class="am-header am-header-default am-no-layout">
-    <h1 class="am-header-title" style="text-align: center;">
-	出错啦
-    </h1>
-</header>
-<div style="text-align: center;margin-top: 5%">
-    <span style="text-align: center">
-	<p>{{ message |safe}} </p>
-        <p>请先验证账号密码后重试</p>
-	<p>有问题可以反馈给小e妹哦！</p>
-	</span>
-</div>
-</body>
 </html>

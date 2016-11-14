@@ -1,6 +1,7 @@
 # coding: utf - 8
 import random
 import re
+import time
 
 import bs4
 from bs4 import BeautifulSoup
@@ -30,7 +31,7 @@ class Proxies():
 class VPN(object):
     def __init__(self, id, internet_pwd):
         if not id or not internet_pwd:
-            raise RuntimeError("wrong arguments")
+            raise Exception("wrong arguments")
         self.id = id
         self.internet_pwd = internet_pwd
         self.s = requests.session()
@@ -51,7 +52,7 @@ class VPN(object):
             r = self.s.post(login_url, data=login_data, timeout=2)
         except Exception as e:
             logger.error(e.message)
-            raise RuntimeError("error:上网登录密码错误")
+            raise Exception("error:上网登录密码错误")
 
         # 判断密码正确:
         if not re.match(r'.+p=failed', r.url) is None:
@@ -72,7 +73,7 @@ class VPN(object):
 
         if not self.s.cookies.get('DSID'):
             logger.error("error:查询次数太多")
-            raise RuntimeError("error:查询次数太多,学校vpn禁止了ip,没人的时候再来吧~~")
+            raise Exception("error:查询次数太多,学校vpn禁止了ip,没人的时候再来吧~~")
         logger.info('succeed logging into vpn ...')
 
     def logout(self):
@@ -131,11 +132,11 @@ class JWC(VPN):
             if result:
                 error_msg = result[0]
                 logger.warning(error_msg)
-                raise RuntimeError("error: %s" % error_msg)
+                raise Exception("error: %s" % error_msg)
             else:
                 logger.error("error: 未知的异常")
                 logger.error(r.text)
-                raise RuntimeError("error: 未知的异常")
+                raise Exception("error: 未知的异常")
 
     def get_score(self, time='2015-2016-1'):
         """
@@ -200,7 +201,7 @@ class JWC(VPN):
         g = re.findall("""<input.*"xs0101id".*value ?= ?"(.*)".*/>""", r.text)
         if len(g) < 1:
             logger.error('get_timetable,拿不到操作码')
-            return u"登录已失效"
+            return "登录已失效"
         # get html
         signid = g[0]
         logger.info(signid)

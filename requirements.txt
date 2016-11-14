@@ -10,3 +10,4 @@ Werkzeug
 gevent
 gunicorn
 redis
+fabric3
