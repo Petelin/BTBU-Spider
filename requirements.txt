@@ -7,8 +7,6 @@ requests
 six
 urllib3
 Werkzeug
-wheel
 gevent
 gunicorn
 redis
-uWSGI

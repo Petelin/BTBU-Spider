@@ -1,14 +1,16 @@
 # coding: utf - 8
 import random
 import re
-import time
 
 import bs4
 from bs4 import BeautifulSoup
 
-import utils
 from cls import logger, settings
-from idcode import *
+from cls.py import utils
+from cls.py.idcode import *
+
+# close ssl warning. i know urls is safe and have no certify certificate
+requests.packages.urllib3.disable_warnings()
 
 
 class Proxies():
@@ -18,7 +20,7 @@ class Proxies():
         ip = random.choice([k for k, v in all for i in range(v)])
         p = dict(https=ip, http=ip)
         try:
-            r = requests.get("http://www.baidu.com", timeout=1, proxies=p)
+            requests.get("http://www.baidu.com", timeout=1, proxies=p)
         except requests.exceptions.Timeout as e:
             logger.error("proxies not use able: %s" % ip)
             return {'https': ''}
@@ -186,7 +188,7 @@ class JWC(VPN):
                         score.append(td.get_text().strip())
                 scores.append(score)
             for hint in soup.find_all(id="tblBmDiv"):
-                scores.append([hint.get_text().strip()])
+                scores.append("".join(hint.get_text().split()[:-1]))
             return scores
 
     def get_timetable(self, time):
@@ -245,21 +247,17 @@ class JWC(VPN):
         if not tr:
             return {"isok": False}
 
-        list = []
-        find_all = tr.find_all('td')
-        for td in find_all:
-            list.append(td.string)
-        f = {
+        detail = [td.string for td in tr.find_all('td')]
+        return {
             'isok': True,
-            'normal': list[0].encode('utf-8') or 0,
-            'bili1': list[1].encode('utf-8') or 0,
-            'medium': list[2].encode('utf-8') or 0,
-            'bili2': list[3].encode('utf-8') or 0,
-            'finale': list[4].encode('utf-8') or 0,
-            'bili3': list[5].encode('utf-8') or 0,
-            'total': list[6].encode('utf-8') or 0,
+            'normal': detail[0] or 0,
+            'bili1': detail[1] or 0,
+            'medium': detail[2] or 0,
+            'bili2': detail[3] or 0,
+            'finale': detail[4] or 0,
+            'bili3': detail[5] or 0,
+            'total': detail[6] or 0,
         }
-        return f
 
     def traffic(self, id, name, radio=2):
         # 先要授权
@@ -298,7 +296,7 @@ if __name__ == "__main__":
     j = JWC(id, i_pwd, i_pwd)
     j.login()
     # print j.get_timetable('2015-2016-2')
-    print j.get_score('2015-2016-2')
+    print(j.get_score('2015-2016-2'))
     print(j.traffic(u'1302010635', u'张晓林'))
     # print j.get_CET()
 

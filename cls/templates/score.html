@@ -80,7 +80,7 @@
         <th>学时</th>
         <th>学分</th>
         <th>分数</th>
-{#        <th>考试情况</th>#}
+        {#        <th>考试情况</th>#}
     </tr>
     </thead>
     <tbody>
@@ -93,10 +93,9 @@
             <td>{{ row[10] }}</td>
             <td>{{ row[11] }}</td>
             <td><a onclick="{{ row[6][1] }}" class="btn btn-success btn-sm">{{ row[6][0] }}</a></td>
-{#            <td>{{ row[12] }}</td>#}
         </tr>
     {% endfor %}
     </tbody>
 </table>
-<h4 class="text-info">{{ scoretable[-2][0] }}{{ scoretable[-1][0] }}</h4>
+<h4 class="text-info">{{ scoretable[-2] }}<br>{{ scoretable[-1] }}</h4>
 

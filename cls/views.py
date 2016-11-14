@@ -1,9 +1,9 @@
 # coding: utf-8
 from flask import *
 
-from py import utils
-from py.vpn import JWC, BaseCodeStore
 from . import app, logger
+from .py import utils
+from .py.vpn import JWC, BaseCodeStore
 
 
 @app.before_first_request
@@ -45,15 +45,15 @@ def login():
         jwc.login()
     except utils.PasswordError as e:
         # 准备封掉用户id
-        ip = utils.get_ip(request).encode("utf-8")
+        ip = utils.get_ip(request)
         logger.error("准备封掉ip: {}".format(ip))
         utils.incr('cls.vpn.block_ip::' + ip, 600)
-        return render_template("wrong.html", message=e.message.decode('utf8'))
+        return render_template("wrong.html", message=e.message)
     except Exception as e:
-        emsg = e.message.decode('utf-8')
+        emsg = e.message
         if u'密码错误' in emsg:
             emsg = u"教务处密码错误，请检查后重试"
-        logger.warning('教务处登录异常: {}'.format(emsg.encode("utf-8")))
+        logger.warning('教务处登录异常: {}'.format(emsg))
         return render_template("wrong.html", message=emsg)
     session['DSID'] = jwc.s.cookies.get('DSID')
     session['id'] = jwc.id

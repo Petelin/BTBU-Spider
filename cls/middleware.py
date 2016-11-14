@@ -4,7 +4,7 @@ import traceback
 
 from flask import g, request, session
 
-from settings import logger
+from cls.settings import logger
 
 
 class ReverseProxied(object):
@@ -89,7 +89,7 @@ def init_middleware(app):
     app.wsgi_app = ReverseProxied(app.wsgi_app)
     app.wsgi_app = Sentry(app.wsgi_app)
 
-    from settings import MIDDLEWARES
+    from .settings import MIDDLEWARES
     for m in MIDDLEWARES:
         m = globals().get(m)
         if m:
