@@ -47,7 +47,6 @@ def login():
         # 准备封掉用户id
         ip = utils.get_ip(request)
         logger.error("准备封掉ip: {}".format(ip))
-        utils.incr('cls.vpn.block_ip::' + ip, 600)
         return render_template("wrong.html", message=str(e))
     except Exception as e:
         emsg = str(e)

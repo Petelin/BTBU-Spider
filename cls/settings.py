@@ -1,12 +1,14 @@
-from logging import Logger, FileHandler, Formatter, WARN, INFO, DEBUG
+from logging import Logger, FileHandler, Formatter, WARN, INFO
 
-DEBUG = False
+DEBUG = True
+
+SECRET_KEY = "QNGRS$K53.4r1<XIcgCs2aj^x0yMEbY?m!tH(f9',~{TOhn8/dq;A=kU#PiF:}lu"
 
 ### logger config
 logger = Logger('cls')
-WARN_LOGGER = "/tmp/cls_warn.log"
-INFO_LOGGER = "/tmp/cls_info.log"
-DEBUG_LOGGER = "/tmp/cls_debug.log"
+WARN_LOGGER = "E://cls_warn.log"
+INFO_LOGGER = "E://cls_info.log"
+DEBUG_LOGGER = "E://cls_debug.log"
 formatter = Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
 filewarnhandler = FileHandler(WARN_LOGGER, 'a')
@@ -34,14 +36,6 @@ logger.addHandler(filedebughandler)
 #
 #
 # logger.warning = my_warning
-
-### redis
-redis_url = '127.0.0.1:6379'
-
-fail_count_limit = 6
-
-VPN_FAIL_KEY = 'cls.vpn.fail_count'
-
 ###
 
 MIDDLEWARES = ["ProfileMiddleWare"]

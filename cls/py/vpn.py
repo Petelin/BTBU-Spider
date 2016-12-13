@@ -6,7 +6,7 @@ import time
 import bs4
 from bs4 import BeautifulSoup
 
-from cls import logger, settings
+from cls import logger
 from cls.py import utils
 from cls.py.idcode import *
 
@@ -56,10 +56,6 @@ class VPN(object):
 
         # 判断密码正确:
         if not re.match(r'.+p=failed', r.url) is None:
-            utils.incr(settings.VPN_FAIL_KEY)
-            if utils.over_limit(settings.VPN_FAIL_KEY):
-                logger.error("vpn登录失败超过限制: %d" % settings.fail_count_limit)
-            logger.warning("vpn密码不对 %s,vpn登录失败超过 %s次" % (str(login_data), utils.get(settings.VPN_FAIL_KEY)))
             raise utils.PasswordError("error:上网登录密码错误,不要在盲目尝试啦")
 
         soup = bs4.BeautifulSoup(r.text.encode("gbk", errors='replace').decode("gbk"), 'html.parser')
