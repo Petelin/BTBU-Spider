@@ -1,4 +1,4 @@
-from logging import Logger, FileHandler, Formatter, WARN, INFO
+from logging import Logger, FileHandler, Formatter, WARN, INFO, DEBUG
 
 DEBUG = False
 
@@ -6,6 +6,7 @@ DEBUG = False
 logger = Logger('cls')
 WARN_LOGGER = "/tmp/cls_warn.log"
 INFO_LOGGER = "/tmp/cls_info.log"
+DEBUG_LOGGER = "/tmp/cls_debug.log"
 formatter = Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
 filewarnhandler = FileHandler(WARN_LOGGER, 'a')
@@ -16,8 +17,13 @@ fileinfohandler = FileHandler(INFO_LOGGER, 'a')
 fileinfohandler.setLevel(INFO)
 fileinfohandler.setFormatter(formatter)
 
+filedebughandler = FileHandler(DEBUG_LOGGER, 'a')
+filedebughandler.setLevel(DEBUG)
+filedebughandler.setFormatter(formatter)
+
 logger.addHandler(filewarnhandler)
 logger.addHandler(fileinfohandler)
+logger.addHandler(filedebughandler)
 
 # origin_warning = logger.warning
 #

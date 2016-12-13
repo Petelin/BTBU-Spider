@@ -51,7 +51,7 @@ class VPN(object):
         try:
             r = self.s.post(login_url, data=login_data, timeout=2)
         except Exception as e:
-            logger.error(e.message)
+            logger.error(e)
             raise Exception("error:上网登录密码错误")
 
         # 判断密码正确:
@@ -176,7 +176,7 @@ class JWC(VPN):
             tag.decompose()
         html = soup.find(id="mxhDiv")
         if not html:
-            return soup.text
+            return []
         else:
             scores = []
             tds = html.find_all("td")
@@ -285,6 +285,9 @@ class JWC(VPN):
 
         # 解析
         soup = BeautifulSoup(html, 'html.parser')
+        print(html)
+        logger.debug(html)
+        logger.error(html)
         u2t = [soup.find_all('strong')[-1].parent.parent.parent.parent.text.strip().split('\n')[i] for i in [-2, 3]]
         return u2t
 
