@@ -127,6 +127,9 @@ class JWC(VPN):
             r = self.s.post(login_url, data={'method': 'logonBySSO'})
             if r.status_code == 200:
                 return self.s.cookies
+            else:
+                logger.error("登录教务处拿权限失败")
+                raise Exception("error: %s" % error_msg)
         else:
             result = re.findall('''<span id="errorinfo">(.*)</span>''', r.text)
             if result:
