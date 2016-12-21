@@ -17,14 +17,22 @@ requests.packages.urllib3.disable_warnings()
 class Proxies():
     @staticmethod
     def get():
-        all = (("", 1), ("http://202.106.16.36:3128", 0),)
-        ip = random.choice([k for k, v in all for i in range(v)])
-        p = dict(https=ip, http=ip)
         try:
-            requests.get("http://www.baidu.com", timeout=1, proxies=p)
-        except requests.exceptions.Timeout as e:
-            logger.error("proxies not use able: %s" % ip)
-            return {'https': ''}
+            ips = requests.get('http://localhost:8000/?types=0', timeout=1).json()
+        except:
+            return dict(https='', http='')
+        while True:
+            ip = random.choice(ips)
+            url = 'http://{0[0]}:{0[1]}'.format(ip)
+            p = dict(https=url, http=url)
+            try:
+                requests.get("https://www.baidu.com", timeout=1, proxies=p)
+            except:
+                logger.error("proxies not use able: %s" % ip)
+                requests.get('http://localhost:8000/delete?ip={}'.format(ip), timeout=1)
+                continue
+            else:
+                break
         return p
 
 
