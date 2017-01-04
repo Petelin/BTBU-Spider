@@ -18,7 +18,7 @@ class Proxies():
     @staticmethod
     def get():
         try:
-            ips = requests.get('http://localhost:8000/?types=0', timeout=1).json()
+            ips = requests.get('http://localhost:8000/?types=0&count=5', timeout=1).json()
         except:
             return dict(https='', http='')
         while True:
@@ -26,10 +26,10 @@ class Proxies():
             url = 'http://{0[0]}:{0[1]}'.format(ip)
             p = dict(https=url, http=url)
             try:
-                requests.get("https://www.baidu.com", timeout=1, proxies=p)
+                requests.get("https://www.baidu.com", timeout=0.5, proxies=p)
             except:
                 logger.error("proxies not use able: %s" % ip)
-                requests.get('http://localhost:8000/delete?ip={}'.format(ip), timeout=1)
+                requests.get('http://localhost:8000/delete?ip={}'.format(ip[0]), timeout=1)
                 continue
             else:
                 break
@@ -312,7 +312,6 @@ if __name__ == "__main__":
     j.login()
     # print j.get_timetable('2015-2016-2')
     print(j.get_score('2015-2016-2'))
-    print(j.traffic(u'1302010635', u'张晓林'))
     # print j.get_CET()
 
     # print(Proxies.get())
