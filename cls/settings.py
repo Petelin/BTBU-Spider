@@ -36,7 +36,8 @@ logger.addHandler(filedebughandler)
 # logger.warning = my_warning
 
 ### redis
-redis_url = '127.0.0.1:6379'
+redis_url = 'redis://127.0.0.1:6379'
+pp_redis_url = 'redis://127.0.0.1:6379/1'
 
 fail_count_limit = 6
 

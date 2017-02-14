@@ -34,3 +34,27 @@ def get_ip(request):
         ip = request.headers.get('X-Real-IP', None) or \
              request.headers.get('X-Forwarded-For', None)
     return ip
+
+pp_redis = Redis.from_url(settings.pp_redis_url)
+
+
+def get_proxy():
+    name = pp_redis.randomkey()
+    return pp_redis.hmget(name, ('ip', 'port')), name
+
+def rm_proxy(name):
+    if redis.exists(name):
+        new_score = int(redis.get(name)) // 2
+        if new_score==0:
+            redis.delete(name)
+            return {1:True, 0:False}[pp_redis.delete(name)]
+        else:
+            redis.set(name, new_score)
+    else:
+        return {1:True, 0:False}[pp_redis.delete(name)]
+
+def good_proxy(name):
+    if not redis.exists(name):
+        redis.set(name, 2)
+    else:
+        redis.incr(name)

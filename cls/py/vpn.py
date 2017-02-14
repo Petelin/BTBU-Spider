@@ -8,31 +8,28 @@ from bs4 import BeautifulSoup
 
 from cls import logger, settings
 from cls.py import utils
+from cls.py.utils import get_proxy, rm_proxy, good_proxy
 from cls.py.idcode import *
 
 # close ssl warning. i know urls is safe and have no certify certificate
 requests.packages.urllib3.disable_warnings()
 
-
 class Proxies():
     @staticmethod
     def get():
-        try:
-            ips = requests.get('http://localhost:8000/?types=0&count=5', timeout=1).json()
-        except:
+        (ip, port), name = get_proxy()
+        if ip is None or port is None:
             return dict(https='', http='')
-        while True:
-            ip = random.choice(ips)
-            url = 'http://{0[0]}:{0[1]}'.format(ip)
-            p = dict(https=url, http=url)
-            try:
-                requests.get("https://www.baidu.com", timeout=0.5, proxies=p)
-            except:
-                logger.error("proxies not use able: %s" % ip)
-                requests.get('http://localhost:8000/delete?ip={}'.format(ip[0]), timeout=1)
-                continue
-            else:
-                break
+        ip, port = ip.decode(), port.decode()
+        url = 'http://{0}:{1}'.format(ip, port)
+        p = dict(https=url, http=url)
+        try:
+            r = requests.get("https://www.baidu.com", timeout=1, proxies=p)
+            good_proxy(name)
+        except:
+            logger.error("proxies not use able: %s" % ip)
+            rm_proxy(name)
+            return dict(https='', http='')
         return p
 
 
@@ -310,8 +307,8 @@ if __name__ == "__main__":
 
     j = JWC(id, i_pwd, i_pwd)
     j.login()
-    # print j.get_timetable('2015-2016-2')
-    print(j.get_score('2015-2016-2'))
+    print(j.get_timetable('2016-2017-2'))
+    # print(j.get_score('2015-2016-2'))
     # print j.get_CET()
 
     # print(Proxies.get())

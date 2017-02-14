@@ -51,8 +51,6 @@ def login():
         return render_template("wrong.html", message=str(e))
     except Exception as e:
         emsg = str(e)
-        print(emsg, type(emsg))
-        logger.warning(emsg, type(emsg))
         if '密码错误' in emsg:
             emsg = '教务处密码错误，请检查后重试'
         logger.warning('教务处登录异常: {}'.format(emsg))
