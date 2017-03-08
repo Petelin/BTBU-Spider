@@ -1,4 +1,9 @@
 # coding: utf-8
+from collections import namedtuple
+from os import walk
+from urllib.parse import quote, unquote
+from .py.exception import BaseException
+
 from flask import *
 
 from . import app, logger
@@ -23,6 +28,23 @@ def test1vpn(id, pwd):
     return msg
 
 
+@app.route('/lover')
+def lover():
+    Post = namedtuple("Post", ["url", "title"])
+    postlist = []
+    for root, dirs, files in walk('/srv/static/html/xjj'):
+        for fname in files:
+            query_url = quote(root.split('/srv/static/html', 1)[1] + '/' + fname)
+            postlist.append(Post(url='/lover/player?url=' + query_url, title="".join(fname.split(".")[:-1])))
+    return render_template('lover.html', postlist=postlist)
+
+
+@app.route('/lover/player')
+def lover_player():
+    url = unquote(request.args.get("url"))
+    return render_template('player.html', url=url)
+
+
 @app.route('/')
 def index():
     sessionid = session.get('DSID')
@@ -38,26 +60,19 @@ def login():
     internet_pwd = request.form.get('internetpw')
     pwd = request.form.get('pw')
     if not id or not internet_pwd or not pwd or len(id) != 10:
-        logger.warning('一开始账号密码输入错误,{} :: {} :: {}'.format(id, internet_pwd, pwd))
         return render_template("wrong.html", message="账号密码错误")
-    jwc = JWC(id, internet_pwd, pwd)
-    try:
-        jwc.login()
-    except utils.PasswordError as e:
-        # 准备封掉用户id
-        ip = utils.get_ip(request)
-        logger.error("准备封掉ip: {}".format(ip))
-        utils.incr('cls.vpn.block_ip::' + ip, 600)
-        return render_template("wrong.html", message=str(e))
-    except Exception as e:
-        emsg = str(e)
-        if '密码错误' in emsg:
-            emsg = '教务处密码错误，请检查后重试'
-        logger.warning('教务处登录异常: {}'.format(emsg))
-        return render_template("wrong.html", message=emsg)
-    session['DSID'] = jwc.s.cookies.get('DSID')
-    session['id'] = jwc.id
-    session.permanent = True
+    with JWC(id, internet_pwd, pwd) as jwc:
+        try:
+            jwc.login()
+        except BaseException as e:
+            # 准备封掉用户id
+            ip = utils.get_ip(request)
+            logger.error("准备封掉ip: {}".format(ip))
+            utils.incr('cls.vpn.block_ip::' + ip, 600)
+            return render_template("wrong.html", message=e.message)
+        session['DSID'] = jwc.s.cookies.get('DSID')
+        session['id'] = jwc.id
+        session.permanent = True
     return redirect('/center.html')
 
 
@@ -65,9 +80,9 @@ def login():
 def score_login():
     term = request.form.get('term')
     if 'DSID' in session and term:
-        j = JWC(sessionid=session.get('DSID'))
-        scoretable = j.get_score(term)
-        return render_template('score.html', scoretable=scoretable)
+        with JWC(sessionid=session.get('DSID')) as j:
+            scoretable = j.get_score(term)
+            return render_template('score.html', scoretable=scoretable)
     return redirect('/login.html')
 
 
@@ -75,8 +90,8 @@ def score_login():
 def detail():
     params = request.form.get('params')
     if 'DSID' in session and params:
-        j = JWC(sessionid=session.get('DSID'))
-        return json.dumps(j.get_score_detial(params))
+        with JWC(sessionid=session.get('DSID')) as j:
+            return json.dumps(j.get_score_detial(params))
     return json.dumps({'isok': False})
 
 
@@ -84,8 +99,8 @@ def detail():
 def timetable():
     term = request.form.get('term')
     if 'DSID' in session and term:
-        j = JWC(sessionid=session.get('DSID'))
-        table = j.get_timetable(term)
+        with JWC(sessionid=session.get('DSID')) as j:
+            table = j.get_timetable(term)
         return render_template('timetable.html', table=table)
     return redirect('/login.html')
 
@@ -93,8 +108,8 @@ def timetable():
 @app.route('/CET', methods=['GET'])
 def CET():
     if 'DSID' in session:
-        j = JWC(sessionid=session.get('DSID'))
-        scorelist = j.get_CET()
+        with JWC(sessionid=session.get('DSID')) as j:
+            scorelist = j.get_CET()
         return json.dumps(scorelist)
     return redirect('/login.html')
 
@@ -104,18 +119,18 @@ def traffic():
     """流量获取"""
     use2total = []
     if 'id' in session and 'DSID' in session:
-        j = JWC(sessionid=session.get('DSID'))
-        name = session.get('name') or j.is_ok()
-        session['name'] = name
-        use2total = j.traffic(session['id'], name)
+        with JWC(sessionid=session.get('DSID')) as j:
+            name = session.get('name') or j.is_ok()
+            session['name'] = name
+            use2total = j.traffic(session['id'], name)
     return json.dumps(use2total)
 
 
 @app.route('/logout')
 def logout():
     if 'DSID' in session:
-        j = JWC(sessionid=session.get('DSID'))
-        j.logout()
+        with JWC(sessionid=session.get('DSID')) as j:
+            j.logout()
     session.clear()
     logger.info("logout ...")
     return redirect('/')

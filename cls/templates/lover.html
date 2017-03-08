@@ -1,0 +1,77 @@
+<!DOCTYPE HTML5>
+
+<html>
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>almost lover</title>
+    <script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert-dev.min.js"></script>
+
+    <link href="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAxMC8yOS8xMiKqq3kAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAABHklEQVRIib2Vyw6EIAxFW5idr///Qx9sfG3pLEyJ3tAwi5EmBqRo7vHawiEEERHS6x7MTMxMVv6+z3tPMUYSkfTM/R0fEaG2bbMv+Gc4nZzn+dN4HAcREa3r+hi3bcuu68jLskhVIlW073tWaYlQ9+F9IpqmSfq+fwskhdO/AwmUTJXrOuaRQNeRkOd5lq7rXmS5InmERKoER/QMvUAPlZDHcZRhGN4CSeGY+aHMqgcks5RrHv/eeh455x5KrMq2yHQdibDO6ncG/KZWL7M8xDyS1/MIO0NJqdULLS81X6/X6aR0nqBSJcPeZnlZrzN477NKURn2Nus8sjzmEII0TfMiyxUuxphVWjpJkbx0btUnshRihVv70Bv8ItXq6Asoi/ZiCbU6YgAAAABJRU5ErkJggg==);
+        }
+
+        .error-template {
+            padding: 40px 15px;
+            text-align: center;
+        }
+
+        .error-actions {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .error-actions .btn {
+            margin-right: 10px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".row").hide();
+            counter = 0;
+            swal({
+                title: "你是不是我的宝宝?",
+                type: "input",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                animation: "slide-from-top",
+                inputPlaceholder: "我爱xx"
+            }, function (inputValue) {
+                if (inputValue === '5233' || (inputValue === "" && counter++ === 5)) {
+                    swal({
+                        title: "么么哒😘",
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: "success"
+                    });
+                    $(".row").show();
+                }
+            });
+        });
+    </script>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4 col-xs-8 col-xs-offset-2">
+            <ul class="list-group">
+                {% for post in postlist %}
+                    <li class="">
+                        <a href="{{ post.url }}" class="text-center" target="_blank">
+                          <h4>{{ post.title }}</h4>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div>
+        <div class="col-md-4 col-md-offset-4 col-xs-8 col-xs-offset-2">
+             <video src="" controls="controls" style="max-width=100%">
+        </div>
+    </div>
+</head>
+</html>
