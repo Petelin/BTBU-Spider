@@ -2,11 +2,6 @@ from redis import Redis
 
 from cls import settings
 
-
-class PasswordError(RuntimeError):
-    pass
-
-
 redis = Redis.from_url(settings.redis_url)
 
 

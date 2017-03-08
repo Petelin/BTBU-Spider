@@ -46,32 +46,37 @@ def get_idcode(img_url, **kwargs):
     :return:验证码字符串
     """
     response = requests.get(img_url, verify=False, **kwargs)
-    idcode_image = Image.open(BytesIO(response.content))
-    id_code = ""
-    # 切图识别验证码中的数字
-    for qietu in range(0, 4):
-        error_num_list = [12 * 10] * 10
-        for i, base_code_index in enumerate(BaseCode.BASEIDCODES):
-            error_pixel = 0
-            for y in range(0, 12):
-                for x in range(0, 10):
-                    now_pixel_count = sum(idcode_image.getpixel((x + 3 + 10 * qietu, y + 4)))
-                    now_pixel_count = 0 if now_pixel_count > 700 else 255
-                    base_pixel_count = BaseCodeStore.get_basecode(base_code_index).getpixel(x, y)
-                    if now_pixel_count != base_pixel_count:
-                        error_pixel += 1
-            error_num_list[i] = error_pixel
-            if error_pixel < 10:
-                break
-        one_of_idcode = error_num_list.index(min(error_num_list))
-        id_code += BaseCode.BASEIDCODES[one_of_idcode]
+    content_file = BytesIO(response.content)
+    content_file.seek(0)
+    try:
+        idcode_image = Image.open(content_file)
+        id_code = ""
+        # 切图识别验证码中的数字
+        for qietu in range(0, 4):
+            error_num_list = [12 * 10] * 10
+            for i, base_code_index in enumerate(BaseCode.BASEIDCODES):
+                error_pixel = 0
+                for y in range(0, 12):
+                    for x in range(0, 10):
+                        now_pixel_count = sum(idcode_image.getpixel((x + 3 + 10 * qietu, y + 4)))
+                        now_pixel_count = 0 if now_pixel_count > 700 else 255
+                        base_pixel_count = BaseCodeStore.get_basecode(base_code_index).getpixel(x, y)
+                        if now_pixel_count != base_pixel_count:
+                            error_pixel += 1
+                error_num_list[i] = error_pixel
+                if error_pixel < 10:
+                    break
+            one_of_idcode = error_num_list.index(min(error_num_list))
+            id_code += BaseCode.BASEIDCODES[one_of_idcode]
+    finally:
+        content_file.close()
     return id_code
 
 
 if __name__ == "__main__":
     BaseCodeStore.setup_basecode()
-    import time
-    time1 = time()
-    for i in range(50):
-        inner_url = "http://jwgl.btbu.edu.cn/verifycode.servlet"
-        print(get_idcode(inner_url))
+    # for i in range(50):
+    inner_url = "http://jwgl.btbu.edu.cn/verifycode.servlet"
+    print(get_idcode(inner_url))
+    from time import sleep
+    sleep(6000000)

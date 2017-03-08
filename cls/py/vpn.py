@@ -10,7 +10,7 @@ from cls import logger, settings
 from cls.py import utils
 from cls.py.utils import get_proxy, rm_proxy, good_proxy
 from cls.py.idcode import *
-
+from .exception import BaseException, VPN_EXCEPTION, JWC_EXCEPTION
 # close ssl warning. i know urls is safe and have no certify certificate
 requests.packages.urllib3.disable_warnings()
 
@@ -24,7 +24,7 @@ class Proxies():
         url = 'http://{0}:{1}'.format(ip, port)
         p = dict(https=url, http=url)
         try:
-            r = requests.get("https://www.baidu.com", timeout=1, proxies=p)
+            requests.get("https://www.baidu.com", timeout=1, proxies=p)
             good_proxy(name)
         except:
             logger.error("proxies not use able: %s" % ip)
@@ -56,19 +56,18 @@ class VPN(object):
         try:
             r = self.s.post(login_url, data=login_data, timeout=2)
         except Exception as e:
-            logger.error(e)
-            raise Exception("error:上网登录密码错误")
+            raise BaseException(VPN_EXCEPTION.PASSWORD_ERROR)
 
         # 判断密码正确:
         if not re.match(r'.+p=failed', r.url) is None:
             utils.incr(settings.VPN_FAIL_KEY)
-            if utils.over_limit(settings.VPN_FAIL_KEY):
-                logger.error("vpn登录失败超过限制: %d" % settings.fail_count_limit)
+            # if utils.over_limit(settings.VPN_FAIL_KEY):
+            #     logger.error("vpn登录失败超过限制: %d" % settings.fail_count_limit)
             logger.warning("vpn密码不对 %s,vpn登录失败超过 %s次" % (str(login_data), utils.get(settings.VPN_FAIL_KEY)))
-            raise utils.PasswordError("error:上网登录密码错误,不要在盲目尝试啦")
+            raise BaseException(VPN_EXCEPTION.PASSWORD_ERROR)
 
-        soup = bs4.BeautifulSoup(r.text.encode("gbk", errors='replace').decode("gbk"), 'html.parser')
         # 在特殊情况下才能拿到cookies
+        soup = bs4.BeautifulSoup(r.text.encode("gbk", errors='replace').decode("gbk"), 'html.parser')
         DSIDFormDataStrs = soup.find_all(id="DSIDFormDataStr")
         if len(DSIDFormDataStrs) > 0:
             formdatastr = DSIDFormDataStrs[0]['value']
@@ -77,13 +76,14 @@ class VPN(object):
             self.s.post(login_url, data=continue_data, verify=False, allow_redirects=False)
 
         if not self.s.cookies.get('DSID'):
-            logger.error("error:查询次数太多")
-            raise Exception("error:查询次数太多,学校vpn禁止了ip,没人的时候再来吧~~")
-        logger.info('succeed logging into vpn ...')
+            raise BaseException(VPN_EXCEPTION.OVERLOAD)
 
     def logout(self):
         logout_url = "https://vpn.btbu.edu.cn/dana-na/auth/logout.cgi"
         self.s.get(logout_url)
+
+    def close(self):
+        self.s.close()
 
 
 class JWC(VPN):
@@ -99,11 +99,10 @@ class JWC(VPN):
             proxies = Proxies.get()
             self.s.proxies.update(proxies)
         else:
-            raise TypeError
+            raise BaseException(JWC_EXCEPTION.PARAM_ERROR)
 
     def is_ok(self):
         """是否能正常访问"""
-        # timetable_url = "https://vpn.btbu.edu.cn/jsxsjz/,DanaInfo=10.0.40.192,Port=80+tkglAction.do?method=kbxxXs"
         main_url = "https://vpn.btbu.edu.cn/framework/,DanaInfo=jwgl.btbu.edu.cn+main.jsp"
         r = self.s.get(main_url)
         g = re.search(u"""<title>(.*?)\[\d+\]北京工商大学综合教学管理系统-强智科技</title>""", r.text)
@@ -133,38 +132,17 @@ class JWC(VPN):
             if r.status_code == 200:
                 return self.s.cookies
             else:
-                logger.error("登录教务处拿权限失败")
-                raise Exception("error: %s" % error_msg)
+                raise BaseException(JWC_EXCEPTION.PASSWORD_ERROR)
         else:
             result = re.findall('''<span id="errorinfo">(.*)</span>''', r.text)
             if result:
                 error_msg = result[0]
-                logger.warning(error_msg)
-                raise Exception("error: %s" % error_msg)
+                raise BaseException(JWC_EXCEPTION.ERROR, error_msg)
             else:
-                logger.error("error: 未知的异常")
                 logger.error(r.text)
-                raise Exception("error: 未知的异常")
+                raise BaseException(JWC_EXCEPTION.UNKNOW_ERROR)
 
     def get_score(self, time='2015-2016-1'):
-        """
-        TODO
-        callCount=1
-        page=/jsxsjz/jiaowu/cjgl/xszq/query_xscj.jsp
-        httpSessionId=7CE28C1FFCBB50A56A3C98372C5894A6
-        scriptSessionId=A690BEE6027439B649BE609DC0059A19494
-        c0-scriptName=dwrMonitor
-        c0-methodName=setSearchBaseBean
-        c0-id=0
-        c0-param0=string:query_xscj.jspE5AEF10185BC2071E0430100007F50A4
-        c0-e1=string:
-        c0-e2=string:2015-2016-1
-        c0-e3=string:13
-        c0-e4=string:qbcj
-        c0-param1=Object_Object:{kcmc:reference:c0-e1, kksj:reference:c0-e2, kcxz:reference:c0-e3, xsfs:reference:c0-e4}
-        batchId=1
-        """
-
         def _page(page=1):
             query_data = {"kksj": time, 'PageNum': page}
             score_url = "https://vpn.btbu.edu.cn/,DanaInfo=jwgl.btbu.edu.cn+xszqcjglAction.do?method=queryxscj"
@@ -210,10 +188,8 @@ class JWC(VPN):
         if len(g) < 1:
             logger.error('get_timetable,拿不到操作码')
             return "登录已失效"
-        # get html
         signid = g[0]
         logger.info(signid)
-        # signid = "A48908FA3D1A430B9582E5457D2E99E1"
         params = "?method=goListKbByXs&istsxx=no&xnxqh=" + time + "&zc=&xs0101id=" + signid
         r = self.s.get(timetable_url + params)
         return self.__parse_timetable(r.content)
@@ -298,6 +274,12 @@ class JWC(VPN):
         logger.error(html)
         u2t = [soup.find_all('strong')[-1].parent.parent.parent.parent.text.strip().split('\n')[i] for i in [-2, 3]]
         return u2t
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
 
 if __name__ == "__main__":
