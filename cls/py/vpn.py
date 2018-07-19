@@ -41,8 +41,8 @@ class VPN(object):
         self.internet_pwd = internet_pwd
         self.s = requests.session()
         self.s.verify = False
-        proxies = Proxies.get()
-        self.s.proxies.update(proxies)
+        # proxies = Proxies.get()
+        # self.s.proxies.update(proxies)
 
     def login(self):
         login_url = "https://vpn.btbu.edu.cn/dana-na/auth/url_default/login.cgi"
@@ -60,10 +60,10 @@ class VPN(object):
 
         # 判断密码正确:
         if not re.match(r'.+p=failed', r.url) is None:
-            utils.incr(settings.VPN_FAIL_KEY)
+            # utils.incr(settings.VPN_FAIL_KEY)
             # if utils.over_limit(settings.VPN_FAIL_KEY):
             #     logger.error("vpn登录失败超过限制: %d" % settings.fail_count_limit)
-            logger.warning("vpn密码不对 %s,vpn登录失败超过 %s次" % (str(login_data), utils.get(settings.VPN_FAIL_KEY)))
+            # logger.warning("vpn密码不对 %s,vpn登录失败超过 %s次" % (str(login_data), utils.get(settings.VPN_FAIL_KEY)))
             raise BaseException(VPN_EXCEPTION.PASSWORD_ERROR)
 
         # 在特殊情况下才能拿到cookies

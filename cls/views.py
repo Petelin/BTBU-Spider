@@ -49,9 +49,9 @@ def login():
             jwc.login()
         except BaseException as e:
             # 准备封掉用户id
-            ip = utils.get_ip(request)
-            logger.error("准备封掉ip: {}".format(ip))
-            utils.incr('cls.vpn.block_ip::' + ip, 600)
+            # ip = utils.get_ip(request)
+            # logger.error("准备封掉ip: {}".format(ip))
+            # utils.incr('cls.vpn.block_ip::' + ip, 600)
             return render_template("wrong.html", message=e.message)
         session['DSID'] = jwc.s.cookies.get('DSID')
         session['id'] = jwc.id
